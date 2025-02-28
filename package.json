@@ -1,0 +1,22 @@
+{
+  "version": "3.9.5",
+  "description": "A TypeScript project implementing a lexer, parser, and interpreter",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/ardiannm/parser.git"
+  },
+  "scripts": {
+    "dev": "cd svelte && yarn dev --open",
+    "parser": "nodemon",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.0",
+    "fs": "^0.0.1-security",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.3.3",
+    "vitest": "^3.0.6"
+  }
+}
