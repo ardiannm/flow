@@ -31,3 +31,54 @@ let VBS = 0
 let VJAHR = 0
 let ZKF = 0
 let ZMVB = 0
+
+// output paramters
+let VBEZBSO = 0
+let BBGRV = 0
+let RVSATZAN = 0
+let BBGKVPV = 0
+let KVSATZAN = 0
+let KVSATZAG = 0
+let PVSATZAN = 0
+let PVSATZAG = 0
+let W1STKL5 = 0
+let W2STKL5 = 0
+let W3STKL5 = 0
+let GFB = 0
+let SOLZFREI = 0
+
+function MPARA() {
+  if (KRV < 1) {
+    BBGRV = 96600
+    RVSATZAN = 0.093
+  }
+  BBGKVPV = 66150
+  KVSATZAN = KVZ / 2 / 100 + 0.07
+  KVSATZAG = 0.0125 + 0.07
+  if (PVS === 1) {
+    PVSATZAN = 0.023
+    PVSATZAG = 0.013
+  } else {
+    PVSATZAN = 0.018
+    PVSATZAG = 0.018
+  }
+  if (PVZ === 1) {
+    PVSATZAN = PVSATZAN + 0.006
+  } else {
+    PVSATZAN = PVSATZAN - PVA * 0.0025
+  }
+  W1STKL5 = 13432
+  W2STKL5 = 33380
+  W3STKL5 = 222260
+  GFB = 11784
+  SOLZFREI = 18130
+}
+
+function MRE4JL() {}
+
+VBEZBSO = 0
+
+function MRE4() {}
+function MRE4ABZ() {}
+function MBERECH() {}
+function MSONST() {}
