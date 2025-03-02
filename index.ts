@@ -1,6 +1,6 @@
 import * as fs from "fs"
 import * as ts from "typescript"
-import { Transpiler } from "./src/analysis/transpiler"
+import { Transpiler } from "./src/transpiler"
 
 // Read the source code from another TypeScript file
 const fileName = "C:\\Users\\Nora\\OneDrive\\Desktop\\flow\\src\\main.ts" // Path to your TypeScript file
@@ -13,4 +13,6 @@ const ast = JSON.parse(JSON.stringify(sourceFile))
 
 const transpiler = new Transpiler()
 
-transpiler.parse(ast)
+const nodes = transpiler.parse(ast)
+
+console.log(nodes.text)

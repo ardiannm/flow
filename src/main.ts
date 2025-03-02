@@ -73,12 +73,3 @@ function MPARA() {
   GFB = 11784
   SOLZFREI = 18130
 }
-
-function MRE4JL() {}
-
-VBEZBSO = 0
-
-function MRE4() {}
-function MRE4ABZ() {}
-function MBERECH() {}
-function MSONST() {}

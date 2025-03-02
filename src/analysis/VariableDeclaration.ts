@@ -5,6 +5,6 @@ export class VariableDeclaration extends SyntaxNode {
     super(260)
   }
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return this.name.text + " = " + this.initializer.text
   }
 }

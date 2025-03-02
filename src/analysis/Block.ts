@@ -5,6 +5,6 @@ export class Block extends SyntaxNode {
     super(241)
   }
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return this.statements.map((statement) => statement.text).join("\n")
   }
 }

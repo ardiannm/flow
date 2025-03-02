@@ -6,6 +6,6 @@ export class SourceFile extends SyntaxNode {
   }
 
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return this.statements.map((statement) => statement.text).join("\n")
   }
 }

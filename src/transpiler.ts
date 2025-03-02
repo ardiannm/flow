@@ -1,24 +1,21 @@
 import { SyntaxKind } from "typescript"
-import { FirstStatement } from "./FirstStatement"
-import { DeclarationList } from "./FirstStatement"
-import { SourceFile } from "./SourceFile"
-import { SyntaxNode } from "./SyntaxNode"
-import { VariableDeclaration } from "./VariableDeclaration"
-import { Identifier } from "./Identifier"
-import { FirstLiteralToken } from "./FirstLiteralToken"
-import { FunctionDeclaration } from "./FunctionDeclaration"
-import { Block } from "./Block"
-import { IfStatement } from "./IfStatement"
-import { BinaryExpression } from "./BinaryExpression"
-
-export class FirstBinaryOperator extends SyntaxNode {
-  constructor(public internalText: string) {
-    super(30)
-  }
-  override get text(): string {
-    throw new Error("Method not implemented.")
-  }
-}
+import { FirstStatement } from "./analysis/FirstStatement"
+import { DeclarationList } from "./analysis/FirstStatement"
+import { SourceFile } from "./analysis/SourceFile"
+import { SyntaxNode } from "./analysis/SyntaxNode"
+import { VariableDeclaration } from "./analysis/VariableDeclaration"
+import { Identifier } from "./analysis/Identifier"
+import { FirstLiteralToken } from "./analysis/FirstLiteralToken"
+import { FunctionDeclaration } from "./analysis/FunctionDeclaration"
+import { Block } from "./analysis/Block"
+import { IfStatement } from "./analysis/IfStatement"
+import { BinaryExpression } from "./analysis/BinaryExpression"
+import { FirstBinaryOperator } from "./analysis/FirstBinaryOperator"
+import { ExpressionStatement } from "./analysis/ExpressionStatement"
+import { FirstAssignment } from "./analysis/FirstAssignment"
+import { SlashToken } from "./analysis/SlashToken"
+import { PlusToken } from "./analysis/PlusToken"
+import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
 export class Transpiler {
   constructor() {}
@@ -44,13 +41,43 @@ export class Transpiler {
       case 226:
         return this.BinaryExpression(node as BinaryExpression)
       case 30:
-        return this.FirstBinaryOperator() // it has no property of any value
+        return this.FirstBinaryOperator()
+      case 244:
+        return this.ExpressionStatement(node as ExpressionStatement)
+      case 64:
+        return this.FirstAssignment()
+      case 44:
+        return this.SlashToken()
+      case 40:
+        return this.PlusToken()
+      case 37:
+        return this.EqualsEqualsEqualsToken()
     }
     throw new Error(`<${SyntaxKind[node.kind]}> has not been implemented: ${node.kind}`)
   }
 
+  EqualsEqualsEqualsToken(): SyntaxNode {
+    return new EqualsEqualsEqualsToken()
+  }
+
+  PlusToken(): SyntaxNode {
+    return new PlusToken()
+  }
+
+  SlashToken(): SyntaxNode {
+    return new SlashToken()
+  }
+
+  FirstAssignment(): SyntaxNode {
+    return new FirstAssignment()
+  }
+
+  ExpressionStatement(node: ExpressionStatement): SyntaxNode {
+    return new ExpressionStatement(this.parse(node.expression))
+  }
+
   FirstBinaryOperator(): SyntaxNode {
-    return new FirstBinaryOperator("?")
+    return new FirstBinaryOperator()
   }
 
   BinaryExpression(node: BinaryExpression): SyntaxNode {
@@ -70,7 +97,7 @@ export class Transpiler {
   }
 
   FirstLiteralToken(node: FirstLiteralToken): SyntaxNode {
-    return new FirstLiteralToken(node.internalText)
+    return new FirstLiteralToken((node as { text: string }).text)
   }
 
   Identifier(node: Identifier): SyntaxNode {

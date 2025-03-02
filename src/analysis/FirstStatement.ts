@@ -6,7 +6,7 @@ export class FirstStatement extends SyntaxNode {
   }
 
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return this.declarations.map((declaration) => declaration.text).join("\n")
   }
 }
 export interface DeclarationList {

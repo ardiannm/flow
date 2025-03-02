@@ -5,6 +5,6 @@ export class IfStatement extends SyntaxNode {
     super(245)
   }
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return "=IF(" + this.expression.text + " ,, " + this.thenStatement.text + ")"
   }
 }

@@ -5,6 +5,6 @@ export class FunctionDeclaration extends SyntaxNode {
     super(262)
   }
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return "\n".repeat(2) + "// " + this.name.text + "\n" + this.body.text
   }
 }
