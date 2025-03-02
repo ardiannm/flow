@@ -85,7 +85,13 @@ export class Transpiler {
   }
 
   BinaryExpression(node: BinaryExpression): SyntaxNode {
-    return new BinaryExpression(this.parse(node.left), this.parse(node.operatorToken), this.parse(node.right))
+    const leftNode = this.parse(node.left)
+    const operatorToken = this.parse(node.operatorToken)
+    const rightNode = this.parse(node.right)
+    if (operatorToken.kind === 64) {
+      this.saveInstruction(leftNode, rightNode)
+    }
+    return new BinaryExpression(leftNode, operatorToken, rightNode)
   }
 
   IfStatement(node: IfStatement): SyntaxNode {
@@ -108,13 +114,17 @@ export class Transpiler {
     return new Identifier(node.escapedText)
   }
 
+  saveInstruction(variable: SyntaxNode, value: SyntaxNode) {
+    this.variables.set(variable.text, this.row)
+    this.values.set(variable.text, value.text)
+    this.instructions.push([variable.text, value.text])
+    this.row++
+  }
+
   VariableDeclaration(node: VariableDeclaration): SyntaxNode {
     const varName = this.parse(node.name)
     const varValue = this.parse(node.initializer)
-    this.variables.set(varName.text, this.row)
-    this.values.set(varName.text, varValue.text)
-    this.instructions.push([varName.text, varValue.text])
-    this.row++
+    this.saveInstruction(varName, varValue)
     return new VariableDeclaration(varName, varValue)
   }
 
