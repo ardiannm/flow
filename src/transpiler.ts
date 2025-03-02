@@ -20,10 +20,11 @@ import { PlusToken } from "./analysis/PlusToken"
 import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
 export class Transpiler {
-  row = 1
+  row = 0
   position = new Map<string, number>()
   instructions: string[][] = []
   conditions: SyntaxNode[] = []
+  thenOrElse = true
   constructor() {}
 
   parse(node: SyntaxNode): SyntaxNode {
@@ -112,15 +113,24 @@ export class Transpiler {
       text += rightNode.text
       textByReference += rightNode.textByReference
       let n = this.conditions.length - 1
-      while (n >= 0) {
-        const condition = this.conditions[n]
-        text = `IF(${condition.text},${text},${prevVar.text})`
-        textByReference = `IF(${condition.textByReference},${textByReference},${prevVar.textByReference})`
-        n--
+      if (this.thenOrElse) {
+        while (n >= 0) {
+          const condition = this.conditions[n]
+          text = `IF(${condition.text},${text},${prevVar.text})`
+          textByReference = `IF(${condition.textByReference},${textByReference},${prevVar.textByReference})`
+          n--
+        }
+      } else {
+        while (n >= 0) {
+          const condition = this.conditions[n]
+          text = `IF(${condition.text},${prevVar.text},${text})`
+          textByReference = `IF(${condition.textByReference},${prevVar.textByReference},${textByReference})`
+          n--
+        }
       }
       const entireFormula = leftNode.text + " = " + text
       const formulaAsReference = leftNode.textByReference + " = " + textByReference
-      this.save(entireFormula, formulaAsReference.padEnd(45) + "# if statement")
+      this.save(entireFormula, formulaAsReference.padEnd(45) + `- ${this.thenOrElse ? "if" : "else"}`)
     } else {
       leftNode = this.parse(node.left)
     }
@@ -130,9 +140,15 @@ export class Transpiler {
   IfStatement(node: IfStatement): SyntaxNode {
     const expression = this.parse(node.expression)
     this.conditions.push(expression)
+    this.thenOrElse = true
     const thenStatement = this.parse(node.thenStatement) as Block
+    let elseStatement: Block | undefined
+    if (node.elseStatement) {
+      this.thenOrElse = false
+      elseStatement = this.parse(node.elseStatement) as Block
+    }
     this.conditions.pop()
-    return new IfStatement(expression, thenStatement, undefined)
+    return new IfStatement(expression, thenStatement, elseStatement)
   }
 
   Block(node: Block): SyntaxNode {
