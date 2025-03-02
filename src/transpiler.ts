@@ -105,6 +105,7 @@ export class Transpiler {
     var text = ""
     var textByReference = ""
     if (operatorToken instanceof FirstAssignment) {
+      const prevVar = this.parse(node.left)
       this.row++
       this.position.set((node.left as Identifier).escapedText, this.row)
       leftNode = this.parse(node.left)
@@ -113,8 +114,8 @@ export class Transpiler {
       let n = this.conditions.length - 1
       while (n >= 0) {
         const condition = this.conditions[n]
-        text = `IF(${condition.text},${text},)`
-        textByReference = `IF(${condition.textByReference},${textByReference},)`
+        text = `IF(${condition.text},${text},${prevVar.text})`
+        textByReference = `IF(${condition.textByReference},${textByReference},${prevVar.textByReference})`
         n--
       }
       const entireFormula = leftNode.text + " = " + text
