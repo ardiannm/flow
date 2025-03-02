@@ -102,7 +102,8 @@ export class Transpiler {
   }
 
   IfStatement(node: IfStatement): SyntaxNode {
-    return new IfStatement(this.parse(node.expression), this.parse(node.thenStatement))
+    console.log(node)
+    return new IfStatement(this.parse(node.expression), this.parse(node.thenStatement), node.elseStatement ? this.parse(node.elseStatement) : undefined)
   }
 
   Block(node: Block): SyntaxNode {
