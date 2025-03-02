@@ -7,4 +7,8 @@ export class PlusToken extends SyntaxNode {
   override get text(): string {
     return "+"
   }
+
+  override get textByReference(): string {
+    return this.text
+  }
 }

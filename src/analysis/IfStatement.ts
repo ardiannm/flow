@@ -7,4 +7,8 @@ export class IfStatement extends SyntaxNode {
   override get text(): string {
     return "=IF(" + this.expression.text + " ,, " + this.thenStatement.text + ")"
   }
+  
+  override get textByReference(): string {
+    return "=IF(" + this.expression.textByReference + " ,, " + this.thenStatement.text + ")"
+  }
 }

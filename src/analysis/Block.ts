@@ -7,4 +7,8 @@ export class Block extends SyntaxNode {
   override get text(): string {
     return this.statements.map((statement) => statement.text).join("\n")
   }
+
+  override get textByReference() {
+    return this.statements.map((statement) => statement.textByReference).join("\n")
+  }
 }

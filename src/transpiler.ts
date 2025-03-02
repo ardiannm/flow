@@ -19,9 +19,9 @@ import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
 export class Transpiler {
   row = 1
-  variables = new Map<string, number>() // variable name, row
-  values = new Map<string, string>() // variable name, row
-  instructions: string[][] = []
+  position = new Map<string, number>() // variable name, row
+  value = new Map<string, string>() // variable name, row
+  instructions: (number | string)[][] = []
   constructor() {}
 
   parse(node: SyntaxNode): SyntaxNode {
@@ -85,11 +85,18 @@ export class Transpiler {
   }
 
   BinaryExpression(node: BinaryExpression): SyntaxNode {
-    const leftNode = this.parse(node.left)
-    const operatorToken = this.parse(node.operatorToken)
-    const rightNode = this.parse(node.right)
+    let rightNode = this.parse(node.right)
+    let operatorToken = this.parse(node.operatorToken)
+    let leftNode: Identifier
     if (operatorToken.kind === 64) {
-      this.saveInstruction(leftNode, rightNode)
+      this.row++
+      this.position.set((node.left as Identifier).escapedText, this.row)
+      leftNode = this.parse(node.left) as Identifier
+      const syntaxNode = new BinaryExpression(leftNode, operatorToken, rightNode)
+      this.value.set(leftNode.text, rightNode.text)
+      this.save(leftNode.text, rightNode.text, syntaxNode.textByReference)
+    } else {
+      leftNode = this.parse(node.left) as Identifier
     }
     return new BinaryExpression(leftNode, operatorToken, rightNode)
   }
@@ -111,21 +118,27 @@ export class Transpiler {
   }
 
   Identifier(node: Identifier): SyntaxNode {
-    return new Identifier(node.escapedText)
-  }
-
-  saveInstruction(variable: SyntaxNode, value: SyntaxNode) {
-    this.variables.set(variable.text, this.row)
-    this.values.set(variable.text, value.text)
-    this.instructions.push([variable.text, value.text])
-    this.row++
+    let address: string
+    if (this.position.has(node.escapedText)) {
+      address = "A" + this.position.get(node.escapedText)!
+    } else {
+      this.row++
+      this.position.set(node.escapedText, this.row)
+      address = "A" + this.row
+    }
+    return new Identifier(this, node.escapedText, address)
   }
 
   VariableDeclaration(node: VariableDeclaration): SyntaxNode {
-    const varName = this.parse(node.name)
-    const varValue = this.parse(node.initializer)
-    this.saveInstruction(varName, varValue)
-    return new VariableDeclaration(varName, varValue)
+    const name = this.parse(node.name)
+    const value = this.parse(node.initializer)
+    const syntaxNode = new VariableDeclaration(name, value)
+    this.save(name.text, value.text, syntaxNode.textByReference)
+    return syntaxNode
+  }
+
+  save(variableName: string, variableValue: string, entireFormula: string) {
+    this.instructions.push([this.row, variableName, variableValue, entireFormula])
   }
 
   FirstStatement(node: FirstStatement): SyntaxNode {

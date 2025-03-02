@@ -7,4 +7,8 @@ export class BinaryExpression extends SyntaxNode {
   override get text(): string {
     return this.left.text + " " + this.operatorToken.text + " " + this.right.text
   }
+  
+  override get textByReference() {
+    return this.left.textByReference + " " + this.operatorToken.textByReference + " " + this.right.textByReference
+  }
 }

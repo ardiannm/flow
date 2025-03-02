@@ -7,4 +7,8 @@ export class SlashToken extends SyntaxNode {
   override get text(): string {
     return "/"
   }
+
+  override get textByReference(): string {
+    return this.text
+  }
 }

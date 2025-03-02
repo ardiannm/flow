@@ -7,4 +7,8 @@ export class FirstLiteralToken extends SyntaxNode {
   override get text(): string {
     return this.internalText
   }
+
+  override get textByReference() {
+    return this.text
+  }
 }

@@ -8,4 +8,8 @@ export class SourceFile extends SyntaxNode {
   override get text(): string {
     return this.statements.map((statement) => statement.text).join("\n")
   }
+
+  override get textByReference(): string {
+    return this.statements.map((statement) => statement.textByReference).join("\n")
+  }
 }

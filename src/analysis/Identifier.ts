@@ -1,10 +1,15 @@
+import { Transpiler } from "../transpiler"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class Identifier extends SyntaxNode {
-  constructor(public escapedText: string) {
+  constructor(public parent: Transpiler, public escapedText: string, public address: string) {
     super(80)
   }
   override get text(): string {
     return this.escapedText
+  }
+
+  override get textByReference(): string {
+    return this.address
   }
 }

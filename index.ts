@@ -13,8 +13,6 @@ const ast = JSON.parse(JSON.stringify(sourceFile))
 
 const transpiler = new Transpiler()
 
-const nodes = transpiler.parse(ast)
-
-console.log(nodes.text)
+transpiler.parse(ast)
 
 console.log(transpiler.instructions)
