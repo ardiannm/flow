@@ -18,6 +18,10 @@ import { PlusToken } from "./analysis/PlusToken"
 import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
 export class Transpiler {
+  row = 1
+  variables = new Map<string, number>() // variable name, row
+  values = new Map<string, string>() // variable name, row
+  instructions: string[][] = []
   constructor() {}
 
   parse(node: SyntaxNode): SyntaxNode {
@@ -105,7 +109,13 @@ export class Transpiler {
   }
 
   VariableDeclaration(node: VariableDeclaration): SyntaxNode {
-    return new VariableDeclaration(this.parse(node.name), this.parse(node.initializer))
+    const varName = this.parse(node.name)
+    const varValue = this.parse(node.initializer)
+    this.variables.set(varName.text, this.row)
+    this.values.set(varName.text, varValue.text)
+    this.instructions.push([varName.text, varValue.text])
+    this.row++
+    return new VariableDeclaration(varName, varValue)
   }
 
   FirstStatement(node: FirstStatement): SyntaxNode {

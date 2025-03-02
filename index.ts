@@ -16,3 +16,7 @@ const transpiler = new Transpiler()
 const nodes = transpiler.parse(ast)
 
 console.log(nodes.text)
+
+console.log(transpiler.variables)
+console.log(transpiler.values)
+console.log(transpiler.instructions)
