@@ -15,4 +15,6 @@ const transpiler = new Transpiler()
 
 transpiler.parse(ast)
 
-console.log(transpiler.instructions)
+for (const row of transpiler.instructions) {
+  console.log(row[0].padEnd(5) + row[1].padEnd(40) + row[2])
+}

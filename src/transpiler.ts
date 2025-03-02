@@ -21,7 +21,7 @@ export class Transpiler {
   row = 1
   position = new Map<string, number>() // variable name, row
   value = new Map<string, string>() // variable name, row
-  instructions: (number | string)[][] = []
+  instructions: string[][] = []
   constructor() {}
 
   parse(node: SyntaxNode): SyntaxNode {
@@ -94,7 +94,7 @@ export class Transpiler {
       leftNode = this.parse(node.left) as Identifier
       const syntaxNode = new BinaryExpression(leftNode, operatorToken, rightNode)
       this.value.set(leftNode.text, rightNode.text)
-      this.save(leftNode.text, rightNode.text, syntaxNode.textByReference)
+      this.save(syntaxNode.text, syntaxNode.textByReference)
     } else {
       leftNode = this.parse(node.left) as Identifier
     }
@@ -133,12 +133,12 @@ export class Transpiler {
     const name = this.parse(node.name)
     const value = this.parse(node.initializer)
     const syntaxNode = new VariableDeclaration(name, value)
-    this.save(name.text, value.text, syntaxNode.textByReference)
+    this.save(syntaxNode.text, syntaxNode.textByReference)
     return syntaxNode
   }
 
-  save(variableName: string, variableValue: string, entireFormula: string) {
-    this.instructions.push([this.row, variableName, variableValue, entireFormula])
+  save(entireFormula: string, formulaAsReference: string) {
+    this.instructions.push([this.row + "", entireFormula, formulaAsReference])
   }
 
   FirstStatement(node: FirstStatement): SyntaxNode {
