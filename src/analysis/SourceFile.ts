@@ -9,7 +9,7 @@ export class SourceFile extends SyntaxNode {
     return this.statements.map((statement) => statement.text).join("\n")
   }
 
-  override get textByReference(): string {
-    return this.statements.map((statement) => statement.textByReference).join("\n")
+  override get reference(): string {
+    return this.statements.map((statement) => statement.reference).join("\n")
   }
 }

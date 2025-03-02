@@ -8,7 +8,7 @@ export class ExpressionStatement extends SyntaxNode {
     return this.expression.text
   }
 
-  override get textByReference(): string {
-    return this.expression.textByReference
+  override get reference(): string {
+    return this.expression.reference
   }
 }

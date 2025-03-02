@@ -9,7 +9,7 @@ export class VariableDeclaration extends SyntaxNode {
     return this.name.text + " = " + this.initializer.text
   }
 
-  override get textByReference(): string {
-    return this.name.textByReference + " = " + this.initializer.textByReference
+  override get reference(): string {
+    return this.name.reference + " = " + this.initializer.reference
   }
 }

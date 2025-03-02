@@ -8,7 +8,7 @@ export class EqualsEqualsEqualsToken extends SyntaxNode {
     return "="
   }
 
-  override get textByReference() {
+  override get reference() {
     return this.text
   }
 }

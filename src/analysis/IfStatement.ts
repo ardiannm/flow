@@ -8,7 +8,7 @@ export class IfStatement extends SyntaxNode {
     return "if " + this.expression.text + " then " + (this.thenStatement.text || "") + " else " + (this.elseStatement?.text || "") + ")"
   }
 
-  override get textByReference(): string {
-    return "if " + this.expression.textByReference + " then " + (this.thenStatement.textByReference || "") + " else " + (this.elseStatement?.textByReference || "") + ")"
+  override get reference(): string {
+    return "if " + this.expression.reference + " then " + (this.thenStatement.reference || "") + " else " + (this.elseStatement?.reference || "") + ")"
   }
 }

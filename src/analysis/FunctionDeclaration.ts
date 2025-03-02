@@ -9,7 +9,7 @@ export class FunctionDeclaration extends SyntaxNode {
     return "\n".repeat(2) + "// " + this.name.text + "\n" + this.body.text
   }
 
-  override get textByReference() {
-    return "\n".repeat(2) + "// " + this.name.textByReference + "\n" + this.body.textByReference
+  override get reference() {
+    return "\n".repeat(2) + "// " + this.name.reference + "\n" + this.body.reference
   }
 }

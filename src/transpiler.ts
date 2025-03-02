@@ -25,7 +25,6 @@ export class Transpiler {
   instructions: string[][] = []
   conditions: SyntaxNode[] = []
   thenOrElse = true
-  constructor() {}
 
   parse(node: SyntaxNode): SyntaxNode {
     switch (node.kind) {
@@ -104,32 +103,32 @@ export class Transpiler {
     let operatorToken = this.parse(node.operatorToken)
     let leftNode: SyntaxNode
     var text = ""
-    var textByReference = ""
+    var reference = ""
     if (operatorToken instanceof FirstAssignment) {
       const prevVar = this.parse(node.left)
       this.row++
       this.position.set((node.left as Identifier).escapedText, this.row)
       leftNode = this.parse(node.left)
       text += rightNode.text
-      textByReference += rightNode.textByReference
+      reference += rightNode.reference
       let n = this.conditions.length - 1
       if (this.thenOrElse) {
         while (n >= 0) {
           const condition = this.conditions[n]
           text = `IF(${condition.text},${text},${prevVar.text})`
-          textByReference = `IF(${condition.textByReference},${textByReference},${prevVar.textByReference})`
+          reference = `IF(${condition.reference},${reference},${prevVar.reference})`
           n--
         }
       } else {
         while (n >= 0) {
           const condition = this.conditions[n]
           text = `IF(${condition.text},${prevVar.text},${text})`
-          textByReference = `IF(${condition.textByReference},${prevVar.textByReference},${textByReference})`
+          reference = `IF(${condition.reference},${prevVar.reference},${reference})`
           n--
         }
       }
       const entireFormula = leftNode.text + " = " + text
-      const formulaAsReference = leftNode.textByReference + " = " + textByReference
+      const formulaAsReference = leftNode.reference + " = " + reference
       this.save(entireFormula, formulaAsReference.padEnd(45) + `- ${this.thenOrElse ? "if" : "else"}`)
     } else {
       leftNode = this.parse(node.left)
@@ -180,7 +179,7 @@ export class Transpiler {
     const name = this.parse(node.name)
     const value = this.parse(node.initializer)
     const syntaxNode = new VariableDeclaration(name, value)
-    this.save(syntaxNode.text, syntaxNode.textByReference)
+    this.save(syntaxNode.text, syntaxNode.reference)
     return syntaxNode
   }
 

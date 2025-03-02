@@ -7,7 +7,7 @@ export class FirstBinaryOperator extends SyntaxNode {
   override get text(): string {
     return "<"
   }
-  override get textByReference(): string {
+  override get reference(): string {
     return this.text
   }
 }
