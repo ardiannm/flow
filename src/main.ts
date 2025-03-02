@@ -58,6 +58,9 @@ function MPARA() {
   if (PVS === 1) {
     PVSATZAN = 0.023
     PVSATZAG = 0.013
+    if (PVS === KRV) {
+      PVSATZAG = 0.013
+    }
   } else {
     PVSATZAN = 0.018
     PVSATZAG = 0.018

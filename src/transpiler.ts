@@ -22,7 +22,6 @@ import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 export class Transpiler {
   row = 1
   position = new Map<string, number>()
-  value = new Map<string, string>()
   instructions: string[][] = []
   conditions: SyntaxNode[] = []
   constructor() {}
@@ -102,17 +101,32 @@ export class Transpiler {
   BinaryExpression(node: BinaryExpression): SyntaxNode {
     let rightNode = this.parse(node.right)
     let operatorToken = this.parse(node.operatorToken)
-    let leftNode = this.parse(node.left)
+    let leftNode: SyntaxNode
+    var text = ""
+    var textByReference = ""
+    if (operatorToken instanceof FirstAssignment) {
+      this.row++
+      this.position.set((node.left as Identifier).escapedText, this.row)
+      leftNode = this.parse(node.left)
+      text += rightNode.text
+      textByReference += rightNode.textByReference
+      for (const condition of this.conditions) {
+        text = `IF(${condition.text},${text},)`
+        textByReference = `IF(${condition.textByReference},${textByReference},)`
+      }
+      this.save(leftNode.text + " = " + text, leftNode.textByReference + " = " + textByReference)
+    } else {
+      leftNode = this.parse(node.left)
+    }
     return new BinaryExpression(leftNode, operatorToken, rightNode)
   }
 
   IfStatement(node: IfStatement): SyntaxNode {
-    const condition = this.parse(node.expression)
-    this.conditions.push(condition)
-    const thenStatement = this.parse(node.thenStatement)
-    const elseStatement = node.elseStatement ? this.parse(node.elseStatement) : undefined
+    const expression = this.parse(node.expression)
+    this.conditions.push(expression)
+    const thenStatement = this.parse(node.thenStatement) as Block
     this.conditions.pop()
-    return new IfStatement(condition, thenStatement, elseStatement)
+    return new IfStatement(expression, thenStatement, undefined)
   }
 
   Block(node: Block): SyntaxNode {

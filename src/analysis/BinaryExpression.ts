@@ -5,10 +5,10 @@ export class BinaryExpression extends SyntaxNode {
     super(226)
   }
   override get text(): string {
-    return this.left.text + " " + this.operatorToken.text + " " + this.right.text
+    return this.left.text + this.operatorToken.text + this.right.text
   }
-  
+
   override get textByReference() {
-    return this.left.textByReference + " " + this.operatorToken.textByReference + " " + this.right.textByReference
+    return this.left.textByReference + this.operatorToken.textByReference + this.right.textByReference
   }
 }
