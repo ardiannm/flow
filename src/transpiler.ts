@@ -110,11 +110,16 @@ export class Transpiler {
       leftNode = this.parse(node.left)
       text += rightNode.text
       textByReference += rightNode.textByReference
-      for (const condition of this.conditions) {
+      let n = this.conditions.length - 1
+      while (n >= 0) {
+        const condition = this.conditions[n]
         text = `IF(${condition.text},${text},)`
         textByReference = `IF(${condition.textByReference},${textByReference},)`
+        n--
       }
-      this.save(leftNode.text + " = " + text, leftNode.textByReference + " = " + textByReference)
+      const entireFormula = leftNode.text + " = " + text
+      const formulaAsReference = leftNode.textByReference + " = " + textByReference
+      this.save(entireFormula, formulaAsReference)
     } else {
       leftNode = this.parse(node.left)
     }
