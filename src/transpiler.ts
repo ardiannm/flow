@@ -120,7 +120,7 @@ export class Transpiler {
       }
       const entireFormula = leftNode.text + " = " + text
       const formulaAsReference = leftNode.textByReference + " = " + textByReference
-      this.save(entireFormula, formulaAsReference)
+      this.save(entireFormula, formulaAsReference.padEnd(45) + "# if statement")
     } else {
       leftNode = this.parse(node.left)
     }
