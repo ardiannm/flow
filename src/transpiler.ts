@@ -6,6 +6,8 @@ import { SyntaxNode } from "./analysis/SyntaxNode"
 import { VariableDeclaration } from "./analysis/VariableDeclaration"
 import { Identifier } from "./analysis/Identifier"
 import { FirstLiteralToken } from "./analysis/FirstLiteralToken"
+import { AsteriskToken } from "./analysis/AsteriskToken"
+import { MinusToken } from "./analysis/MinusToken"
 import { FunctionDeclaration } from "./analysis/FunctionDeclaration"
 import { Block } from "./analysis/Block"
 import { IfStatement } from "./analysis/IfStatement"
@@ -19,9 +21,10 @@ import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
 export class Transpiler {
   row = 1
-  position = new Map<string, number>() // variable name, row
-  value = new Map<string, string>() // variable name, row
+  position = new Map<string, number>()
+  value = new Map<string, string>()
   instructions: string[][] = []
+  conditions: SyntaxNode[] = []
   constructor() {}
 
   parse(node: SyntaxNode): SyntaxNode {
@@ -56,8 +59,20 @@ export class Transpiler {
         return this.PlusToken()
       case 37:
         return this.EqualsEqualsEqualsToken()
+      case 42:
+        return this.AsteriskToken()
+      case 41:
+        return this.MinusToken()
     }
     throw new Error(`<${SyntaxKind[node.kind]}> has not been implemented: ${node.kind}`)
+  }
+
+  MinusToken(): SyntaxNode {
+    return new MinusToken()
+  }
+
+  AsteriskToken(): SyntaxNode {
+    return new AsteriskToken()
   }
 
   EqualsEqualsEqualsToken(): SyntaxNode {
@@ -87,27 +102,22 @@ export class Transpiler {
   BinaryExpression(node: BinaryExpression): SyntaxNode {
     let rightNode = this.parse(node.right)
     let operatorToken = this.parse(node.operatorToken)
-    let leftNode: Identifier
-    if (operatorToken.kind === 64) {
-      this.row++
-      this.position.set((node.left as Identifier).escapedText, this.row)
-      leftNode = this.parse(node.left) as Identifier
-      const syntaxNode = new BinaryExpression(leftNode, operatorToken, rightNode)
-      this.value.set(leftNode.text, rightNode.text)
-      this.save(syntaxNode.text, syntaxNode.textByReference)
-    } else {
-      leftNode = this.parse(node.left) as Identifier
-    }
+    let leftNode = this.parse(node.left)
     return new BinaryExpression(leftNode, operatorToken, rightNode)
   }
 
   IfStatement(node: IfStatement): SyntaxNode {
-    console.log(node)
-    return new IfStatement(this.parse(node.expression), this.parse(node.thenStatement), node.elseStatement ? this.parse(node.elseStatement) : undefined)
+    const condition = this.parse(node.expression)
+    this.conditions.push(condition)
+    const thenStatement = this.parse(node.thenStatement)
+    const elseStatement = node.elseStatement ? this.parse(node.elseStatement) : undefined
+    this.conditions.pop()
+    return new IfStatement(condition, thenStatement, elseStatement)
   }
 
   Block(node: Block): SyntaxNode {
-    return new Block(node.statements.map((statement) => this.parse(statement)))
+    const statements = node.statements.map((statement) => this.parse(statement))
+    return new Block(statements)
   }
 
   FunctionDeclaration(node: FunctionDeclaration): SyntaxNode {
@@ -119,13 +129,13 @@ export class Transpiler {
   }
 
   Identifier(node: Identifier): SyntaxNode {
-    let address: string
+    let address: string = "A"
     if (this.position.has(node.escapedText)) {
-      address = "A" + this.position.get(node.escapedText)!
+      address += this.position.get(node.escapedText)!
     } else {
       this.row++
       this.position.set(node.escapedText, this.row)
-      address = "A" + this.row
+      address += this.row
     }
     return new Identifier(this, node.escapedText, address)
   }

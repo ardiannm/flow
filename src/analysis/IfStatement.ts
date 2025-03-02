@@ -5,10 +5,10 @@ export class IfStatement extends SyntaxNode {
     super(245)
   }
   override get text(): string {
-    return "=IF(" + this.expression.text + " ,, " + this.thenStatement.text + ")"
+    return "if " + this.expression.text + " then " + (this.thenStatement.text || "") + " else " + (this.elseStatement?.text || "") + ")"
   }
 
   override get textByReference(): string {
-    return "=IF(" + this.expression.textByReference + " ,, " + this.thenStatement.text + ")"
+    return "if " + this.expression.textByReference + " then " + (this.thenStatement.textByReference || "") + " else " + (this.elseStatement?.textByReference || "") + ")"
   }
 }
