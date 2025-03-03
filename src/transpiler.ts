@@ -92,8 +92,6 @@ export class Transpiler {
   CallExpression(node: CallExpression): SyntaxNode {
     const name = node.expression.escapedText
     const functionNode = this.functions.get(name)!
-    this.row++
-    this.csvData.push(new EmitOutput("", "", "", "", "execute " + name))
     this.parse(functionNode.body)
     const args = ((node as any).arguments as SyntaxNode[]).map((n) => this.parse(n))
     return new CallExpression(node.expression, args)
@@ -191,9 +189,8 @@ export class Transpiler {
   }
 
   FunctionDeclaration(node: FunctionDeclaration): SyntaxNode {
-    const name = this.parse(node.name)
-    this.csvData.push(new EmitOutput("", "", "", "", "define " + name.text))
-    this.functions.set(name.text, node as FunctionDeclaration)
+    const name = node.name.escapedText
+    this.functions.set(name, node as FunctionDeclaration)
     return new SyntaxVoid(node.kind)
   }
 
