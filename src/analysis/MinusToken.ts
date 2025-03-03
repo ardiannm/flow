@@ -8,7 +8,7 @@ export class MinusToken extends SyntaxNode {
     return "-"
   }
 
-  override get reference() {
+  override get location() {
     return this.text
   }
 }

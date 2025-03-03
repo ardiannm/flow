@@ -9,8 +9,8 @@ export class FirstStatement extends SyntaxNode {
     return this.declarations.map((declaration) => declaration.text).join("\n")
   }
 
-  override get reference() {
-    return this.declarations.map((declaration) => declaration.reference).join("\n")
+  override get location() {
+    return this.declarations.map((declaration) => declaration.location).join("\n")
   }
 }
 

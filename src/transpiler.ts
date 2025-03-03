@@ -19,12 +19,17 @@ import { SlashToken } from "./analysis/SlashToken"
 import { PlusToken } from "./analysis/PlusToken"
 import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
+export class EmitOutput {
+  constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public ifOrElse?: string) {}
+}
+
 export class Transpiler {
   row = 0
   position = new Map<string, number>()
-  instructions: string[][] = []
   conditions: SyntaxNode[] = []
   thenOrElse = true
+
+  data: EmitOutput[] = []
 
   parse(node: SyntaxNode): SyntaxNode {
     switch (node.kind) {
@@ -63,7 +68,7 @@ export class Transpiler {
       case 41:
         return this.MinusToken()
     }
-    throw new Error(`<${SyntaxKind[node.kind]}> has not been implemented: ${node.kind}`)
+    throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented: " + node.kind)
   }
 
   MinusToken(): SyntaxNode {
@@ -102,34 +107,32 @@ export class Transpiler {
     let rightNode = this.parse(node.right)
     let operatorToken = this.parse(node.operatorToken)
     let leftNode: SyntaxNode
-    var text = ""
-    var reference = ""
+    var value = ""
+    var valueAsReference = ""
     if (operatorToken instanceof FirstAssignment) {
       const prevVar = this.parse(node.left)
       this.row++
       this.position.set((node.left as Identifier).escapedText, this.row)
       leftNode = this.parse(node.left)
-      text += rightNode.text
-      reference += rightNode.reference
+      value += rightNode.text
+      valueAsReference += rightNode.location
       let n = this.conditions.length - 1
       if (this.thenOrElse) {
         while (n >= 0) {
           const condition = this.conditions[n]
-          text = `IF(${condition.text},${text},${prevVar.text})`
-          reference = `IF(${condition.reference},${reference},${prevVar.reference})`
+          value = `IF(${condition.text},${value},${prevVar.text})`
+          valueAsReference = `IF(${condition.location},${valueAsReference},${prevVar.location})`
           n--
         }
       } else {
         while (n >= 0) {
           const condition = this.conditions[n]
-          text = `IF(${condition.text},${prevVar.text},${text})`
-          reference = `IF(${condition.reference},${prevVar.reference},${reference})`
+          value = `IF(${condition.text},${prevVar.text},${value})`
+          valueAsReference = `IF(${condition.location},${prevVar.location},${valueAsReference})`
           n--
         }
       }
-      const entireFormula = leftNode.text + " = " + text
-      const formulaAsReference = leftNode.reference + " = " + reference
-      this.save(entireFormula, formulaAsReference.padEnd(45) + `- ${this.thenOrElse ? "if" : "else"}`)
+      this.data.push(new EmitOutput(leftNode.text, value, leftNode.location, valueAsReference, this.thenOrElse ? "if" : "else"))
     } else {
       leftNode = this.parse(node.left)
     }
@@ -164,7 +167,7 @@ export class Transpiler {
   }
 
   Identifier(node: Identifier): SyntaxNode {
-    let address: string = "A"
+    let address: string = "B"
     if (this.position.has(node.escapedText)) {
       address += this.position.get(node.escapedText)!
     } else {
@@ -179,12 +182,8 @@ export class Transpiler {
     const name = this.parse(node.name)
     const value = this.parse(node.initializer)
     const syntaxNode = new VariableDeclaration(name, value)
-    this.save(syntaxNode.text, syntaxNode.reference)
+    this.data.push(new EmitOutput(name.text, value.text, name.location, value.location))
     return syntaxNode
-  }
-
-  save(entireFormula: string, formulaAsReference: string) {
-    this.instructions.push([this.row + "", entireFormula, formulaAsReference])
   }
 
   FirstStatement(node: FirstStatement): SyntaxNode {

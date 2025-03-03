@@ -8,7 +8,7 @@ export class AsteriskToken extends SyntaxNode {
     return "*"
   }
 
-  override get reference() {
+  override get location() {
     return this.text
   }
 }

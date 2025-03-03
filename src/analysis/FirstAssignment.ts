@@ -7,7 +7,7 @@ export class FirstAssignment extends SyntaxNode {
   override get text(): string {
     return "="
   }
-  override get reference(): string {
+  override get location(): string {
     return this.text
   }
 }

@@ -9,7 +9,7 @@ export class Identifier extends SyntaxNode {
     return this.escapedText
   }
 
-  override get reference(): string {
+  override get location(): string {
     return this.address
   }
 }

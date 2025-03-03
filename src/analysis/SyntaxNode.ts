@@ -4,5 +4,5 @@ export abstract class SyntaxNode {
   constructor(public kind: ts.SyntaxKind) {}
 
   abstract get text(): string
-  abstract get reference(): string
+  abstract get location(): string
 }
