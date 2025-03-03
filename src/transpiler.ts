@@ -21,6 +21,8 @@ import { SlashToken } from "./analysis/SlashToken"
 import { PlusToken } from "./analysis/PlusToken"
 import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 import { ParenthesizedExpression } from "./analysis/ParenthesizedExpression"
+import { CallExpression } from "./analysis/CallExpression"
+import { SyntaxVoid } from "./analysis/SyntaxVoid"
 
 export class EmitOutput {
   constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public comment: string) {}
@@ -31,8 +33,8 @@ export class Transpiler {
   position = new Map<string, number>()
   conditions: SyntaxNode[] = []
   thenOrElse = true
-
-  data: EmitOutput[] = []
+  csvData: EmitOutput[] = []
+  private functions = new Map<string, FunctionDeclaration>()
 
   parse(node: SyntaxNode): SyntaxNode {
     switch (node.kind) {
@@ -72,8 +74,18 @@ export class Transpiler {
         return this.MinusToken()
       case 217:
         return this.ParenthesizedExpression(node as ParenthesizedExpression)
+      case 213:
+        return this.CallExpression(node as CallExpression)
     }
-    throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented: " + node.kind)
+    throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented " + node.kind)
+  }
+
+  CallExpression(node: CallExpression): SyntaxNode {
+    const functionNode = this.functions.get(node.expression.escapedText)!
+    const name = this.parse(functionNode.name)
+    this.csvData.push(new EmitOutput(name.text, "", name.location, "", "execute routine"))
+    this.parse(functionNode.body)
+    return new SyntaxVoid(functionNode.kind)
   }
 
   ParenthesizedExpression(node: ParenthesizedExpression): SyntaxNode {
@@ -141,7 +153,7 @@ export class Transpiler {
           n--
         }
       }
-      this.data.push(new EmitOutput(leftNode.text, value, leftNode.location, valueAsReference, this.thenOrElse ? "if" : "else"))
+      this.csvData.push(new EmitOutput(leftNode.text, value, leftNode.location, valueAsReference, this.thenOrElse ? "if" : "else"))
     } else {
       leftNode = this.parse(node.left)
     }
@@ -168,10 +180,10 @@ export class Transpiler {
   }
 
   FunctionDeclaration(node: FunctionDeclaration): SyntaxNode {
-    const functionName = this.parse(node.name)
-    this.data.push(new EmitOutput(functionName.text, "", functionName.location, "", "routine"))
-    const body = this.parse(node.body)
-    return new FunctionDeclaration(functionName, body)
+    const name = this.parse(node.name)
+    this.csvData.push(new EmitOutput(name.text, "", name.location, "", "routine"))
+    this.functions.set(name.text, node as FunctionDeclaration)
+    return new SyntaxVoid(node.kind)
   }
 
   FirstLiteralToken(node: FirstLiteralToken): SyntaxNode {
@@ -194,7 +206,7 @@ export class Transpiler {
     const name = this.parse(node.name)
     const value = this.parse(node.initializer)
     const syntaxNode = new VariableDeclaration(name, value)
-    this.data.push(new EmitOutput(name.text, value.text, name.location, value.location, ""))
+    this.csvData.push(new EmitOutput(name.text, value.text, name.location, value.location, ""))
     return syntaxNode
   }
 
@@ -219,7 +231,9 @@ export class Transpiler {
   }
 
   generateCsv() {
-    const csvContent = this.data.map((row) => [row.variable, this.escapeCSVValue(row.valueLocation), this.escapeCSVValue(row.comment)]).join("\n")
+    const csvContent = this.csvData
+      .map((row) => [this.escapeCSVValue(row.variable), this.escapeCSVValue(row.valueLocation), this.escapeCSVValue(row.comment), this.escapeCSVValue(row.value)])
+      .join("\n")
     fs.writeFileSync("Ablaufplan Lohnsteuer 2024-11-22-PAP-2025_anlage.csv", csvContent)
   }
 }

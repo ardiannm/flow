@@ -15,8 +15,8 @@ const transpiler = new Transpiler()
 
 transpiler.parse(ast)
 
-for (const data of transpiler.data) {
-  console.log(data.variableLocation.padEnd(7) + data.variable.padEnd(15) + data.valueLocation.padEnd(65) + data.comment)
+for (const data of transpiler.csvData) {
+  console.log(data.variableLocation.padEnd(7) + data.variable.padEnd(12) + data.valueLocation.padEnd(60) + data.comment.padEnd(20) + data.value)
 }
 
 transpiler.generateCsv()
