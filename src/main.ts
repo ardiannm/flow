@@ -59,6 +59,40 @@ let VBEZB = 0
 let HFVB = 0
 let HFVBZSO = 0
 let HFVBZ = 0
+let ALTE = 0
+let K = 0
+let BMG = 0
+let HBALTE = 0
+let ZRE4 = 0
+let ZRE4VP = 0
+let ZVBEZ = 0
+let VFRB = 0
+let ANP = 0
+let WVFRB = 0
+let ZVE = 0
+let LSTJAHR = 0
+let ST = 0
+let ZTABFB = 0
+let KFB = 0
+let JBMG = 0
+let ZVBE = 0
+let KZTAB = 0
+let SAP = 0
+let EFA = 0
+let VSP = 0
+let JW = 0
+let LSTLZZ = 0
+let ANTEIL1 = 0
+let VKV = 0
+let VKVLZZ = 0
+let SOLZJ = 0
+let SOLZMIN = 0
+let SOLZLZZ = 0
+let BK = 0
+let VSP1 = 0
+let VSP2 = 0
+let VHB = 0
+let VSPN = 0
 
 function MPARA() {
   if (KRV < 1) {
@@ -126,7 +160,19 @@ function TAB3(num: number) {
   return num
 }
 
+function TAB4(num: number) {
+  return num
+}
+
+function TAB5(num: number) {
+  return num
+}
+
 function ROUNDUP(num: number, digits: number = 0): number {
+  return 0
+}
+
+function ROUNDDOWN(num: number, digits: number = 0): number {
   return 0
 }
 
@@ -180,8 +226,194 @@ function MRE4() {
   MRE4ALTE()
 }
 
-function MRE4ALTE() {}
+function MRE4ALTE() {
+  if (ALTER1 === 0) {
+    ALTE = 0
+  } else {
+    if (AJAHR < 2006) {
+      K = 1
+    } else if (AJAHR < 2058) {
+      K = AJAHR - 2004
+    } else {
+      K = 54
+    }
+    BMG = ZRE4J - ZVBEZJ
+    ALTE = ROUNDUP(BMG * TAB4(K))
+    HBALTE = TAB5(K)
+    if (ALTE > HBALTE) {
+      ALTE = HBALTE
+    }
+  }
+}
+
+function MRE4ABZ() {
+  ZRE4 = ZRE4J - FVB - ALTE - JLFREIB + JLHINZU
+  if (ZRE4 < 0) {
+    ZRE4 = 0
+  }
+  ZRE4VP = ZRE4J
+  ZVBEZ = ZVBEZJ - FVB
+  if (ZVBEZ < 0) {
+    ZVBEZ = 0
+  }
+}
+
+function MBERECH() {
+  MZTABFB()
+  VFRB = (ANP + FVB + FVBZ) * 100
+  MLSTJAHR()
+  WVFRB = (ZVE - GFB) * 100
+  if (WVFRB < 0) {
+    WVFRB = 0
+  }
+  LSTJAHR = ST * F
+  UPLSTLZZ()
+  UPVKVLZZ()
+  if (ZKF > 0) {
+    ZTABFB = ZTABFB + KFB
+    MRE4ABZ()
+    MLSTJAHR()
+    JBMG = ST * F
+  } else {
+    JBMG = LSTJAHR
+  }
+  MSOLZ()
+}
 
 MPARA()
 MRE4JL()
 MRE4()
+MRE4ABZ()
+MBERECH()
+
+function MZTABFB() {
+  ANP = 0
+  if (ZVBEZ >= 0) {
+    if (ZVBEZ < FVBZ) {
+      FVBZ = ZVBEZ
+    }
+  }
+  if (STKL < 6) {
+    if (ZVBEZ > 0) {
+      if (ZVBEZ - FVBZ < 102) {
+        ANP = ROUNDUP(ZVBEZ - FVBZ)
+      } else {
+        ANP = 102
+      }
+    }
+  } else {
+    FVBZ = 0
+    FVBZSO = 0
+  }
+  if (STKL < 6) {
+    if (ZRE4 > ZVBEZ) {
+      if (ZRE4 - ZVBEZ < 1230) {
+        ANP = ROUNDUP(ANP + ZRE4 - ZVBE)
+      } else {
+        ANP = ANP + 1230
+      }
+    }
+  }
+  KZTAB = 1
+  if (STKL === 1) {
+    SAP = 36
+    KFB = ZKF * 9540
+  } else if (STKL === 2) {
+    EFA = 4260
+    SAP = 36
+    KFB = ZKF * 9540
+  } else if (STKL === 3) {
+    KZTAB = 2
+    SAP = 36
+    KFB = ZKF * 9540
+  } else if (STKL === 4) {
+    SAP = 36
+    KFB = ZKF * 4770
+  } else if (STKL === 5) {
+    SAP = 36
+    KFB = 0
+  } else {
+    KFB = 0
+  }
+  ZTABFB = EFA + ANP + SAP + FVBZ
+}
+
+function MLSTJAHR() {
+  UPEVP()
+  ZVE = ZRE4 - ZTABFB - VSP
+  UPMLST()
+}
+
+function UPLSTLZZ() {
+  JW = LSTJAHR * 100
+  UPANTEIL()
+  LSTLZZ = ANTEIL1
+}
+
+function UPVKVLZZ() {
+  UPVKV()
+  JW = VKV
+  UPANTEIL()
+  VKVLZZ = ANTEIL1
+}
+
+function MSOLZ() {
+  SOLZFREI = SOLZFREI * KZTAB
+  if (JBMG > SOLZFREI) {
+    SOLZJ = ROUNDDOWN((JBMG * 5.5) / 100, 2)
+    SOLZMIN = ((JBMG - SOLZFREI) * 11.9) / 100
+    if (SOLZMIN < SOLZJ) {
+      SOLZJ = SOLZMIN
+    }
+    JW = SOLZJ * 100
+    UPANTEIL()
+    SOLZLZZ = ANTEIL1
+  } else {
+    SOLZLZZ = 0
+  }
+  if (R > 0) {
+    JW = JBMG * 100
+    UPANTEIL()
+    BK = ANTEIL1
+  } else {
+    BK = 0
+  }
+}
+
+function UPEVP() {
+  if (KRV === 1) {
+    VSP1 = 0
+  } else {
+    if (ZRE4VP > BBGRV) {
+      ZRE4VP = BBGRV
+    }
+    VSP1 = ZRE4VP * RVSATZAN
+  }
+  VSP2 = 0.12 * ZRE4VP
+  if (STKL === 3) {
+    VHB = 3000
+  } else {
+    VHB = 1900
+  }
+  if (VSP2 > VHB) {
+    VSP2 = VHB
+  }
+  VSPN = ROUNDUP(VSP1 + VSP2)
+  MVSP()
+}
+
+function UPMLST() {
+  throw new Error("Function not implemented.")
+}
+
+function UPANTEIL() {
+  throw new Error("Function not implemented.")
+}
+
+function UPVKV() {
+  throw new Error("Function not implemented.")
+}
+
+function MVSP() {
+  throw new Error("Function not implemented.")
+}
