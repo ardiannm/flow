@@ -220,6 +220,6 @@ export class Transpiler {
 
   generateCsv() {
     const csvContent = this.data.map((row) => [row.variable, this.escapeCSVValue(row.valueLocation), this.escapeCSVValue(row.comment)]).join("\n")
-    fs.writeFileSync("output.csv", csvContent)
+    fs.writeFileSync("Ablaufplan Lohnsteuer 2024-11-22-PAP-2025_anlage.csv", csvContent)
   }
 }
