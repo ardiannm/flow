@@ -19,8 +19,10 @@ import { SlashToken } from "./analysis/SlashToken"
 import { PlusToken } from "./analysis/PlusToken"
 import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 
+import * as fs from "fs"
+
 export class EmitOutput {
-  constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public ifOrElse?: string) {}
+  constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public comment: string) {}
 }
 
 export class Transpiler {
@@ -159,7 +161,10 @@ export class Transpiler {
   }
 
   FunctionDeclaration(node: FunctionDeclaration): SyntaxNode {
-    return new FunctionDeclaration(this.parse(node.name), this.parse(node.body))
+    const functionName = this.parse(node.name)
+    this.data.push(new EmitOutput(functionName.text, "", functionName.location, "", "routine"))
+    const body = this.parse(node.body)
+    return new FunctionDeclaration(functionName, body)
   }
 
   FirstLiteralToken(node: FirstLiteralToken): SyntaxNode {
@@ -182,7 +187,7 @@ export class Transpiler {
     const name = this.parse(node.name)
     const value = this.parse(node.initializer)
     const syntaxNode = new VariableDeclaration(name, value)
-    this.data.push(new EmitOutput(name.text, value.text, name.location, value.location))
+    this.data.push(new EmitOutput(name.text, value.text, name.location, value.location, ""))
     return syntaxNode
   }
 
@@ -193,5 +198,21 @@ export class Transpiler {
 
   SourceFile(node: SourceFile) {
     return new SourceFile(node.statements.map((statement) => this.parse(statement)))
+  }
+
+  escapeCSVValue(value: string | number): string {
+    if (value === null || value === undefined || value === "") {
+      return ""
+    }
+    let strValue = String(value)
+    if (strValue.includes(",") || strValue.includes("\n") || strValue.includes('"')) {
+      strValue = `"${strValue.replace(/"/g, '""')}"`
+    }
+    return strValue
+  }
+
+  generateCsv() {
+    const csvContent = this.data.map((row) => [row.variable, this.escapeCSVValue(row.valueLocation), this.escapeCSVValue(row.comment)]).join("\n")
+    fs.writeFileSync("output.csv", csvContent)
   }
 }

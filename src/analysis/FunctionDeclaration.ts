@@ -6,10 +6,10 @@ export class FunctionDeclaration extends SyntaxNode {
   }
 
   override get text(): string {
-    return "\n".repeat(2) + "// " + this.name.text + "\n" + this.body.text
+    return this.name.text
   }
 
   override get location() {
-    return "\n".repeat(2) + "// " + this.name.location + "\n" + this.body.location
+    return this.name.location
   }
 }
