@@ -23,6 +23,7 @@ import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
 import { ParenthesizedExpression } from "./analysis/ParenthesizedExpression"
 import { CallExpression } from "./analysis/CallExpression"
 import { SyntaxVoid } from "./analysis/SyntaxVoid"
+import { GreaterThanToken } from "./analysis/GreaterThanToken"
 
 export class EmitOutput {
   constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public comment: string) {}
@@ -76,12 +77,21 @@ export class Transpiler {
         return this.ParenthesizedExpression(node as ParenthesizedExpression)
       case 213:
         return this.CallExpression(node as CallExpression)
+      case 32:
+        return this.GreaterThanToken()
+      case 253:
+        return new SyntaxVoid(node.kind)
     }
     throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented " + node.kind)
   }
 
+  GreaterThanToken(): SyntaxNode {
+    return new GreaterThanToken()
+  }
+
   CallExpression(node: CallExpression): SyntaxNode {
     const functionNode = this.functions.get(node.expression.escapedText)!
+    this.row++
     const name = this.parse(functionNode.name)
     this.csvData.push(new EmitOutput(name.text, "", name.location, "", "execute routine"))
     this.parse(functionNode.body)

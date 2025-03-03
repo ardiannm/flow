@@ -50,6 +50,15 @@ let ZRE4J = 0
 let ZVBEZJ = 0
 let JLFREIB = 0
 let JLHINZU = 0
+let FVBZ = 0
+let FVB = 0
+let FVBZSO = 0
+let FVBSO = 0
+let J = 0
+let VBEZB = 0
+let HFVB = 0
+let HFVBZSO = 0
+let HFVBZ = 0
 
 function MPARA() {
   if (KRV < 1) {
@@ -105,5 +114,74 @@ function MRE4JL() {
   }
 }
 
+function TAB1(num: number) {
+  return num
+}
+
+function TAB2(num: number) {
+  return num
+}
+
+function TAB3(num: number) {
+  return num
+}
+
+function ROUNDUP(num: number, digits: number = 0): number {
+  return 0
+}
+
+function MRE4() {
+  if (ZVBEZJ === 0) {
+    FVBZ = 0
+    FVB = 0
+    FVBZSO = 0
+    FVBSO = 0
+  } else {
+    if (VJAHR < 2006) {
+      J = 1
+    } else if (VJAHR < 2058) {
+      J = VJAHR - 2004
+    } else {
+      J = 54
+    }
+    if (LZZ === 1) {
+      VBEZB = VBEZM * ZMVB + VBEZS
+      HFVB = ROUNDUP((TAB2(J) / 12) * ZMVB)
+      FVBZ = ROUNDUP((TAB3(J) / 12) * ZMVB)
+    } else {
+      VBEZB = VBEZM * 12 + VBEZS
+      HFVB = TAB2(J)
+      FVBZ = TAB3(J)
+    }
+    FVB = ROUNDUP((VBEZB * TAB1(J)) / 100, 2)
+    if (FVB > HFVB) {
+      FVB = HFVB
+    }
+    if (FVB > ZVBEZJ) {
+      FVB = ZVBEZJ
+    }
+    FVBSO = ROUNDUP(FVB + (VBEZBSO * TAB1(J)) / 100, 2)
+    if (FVBSO > TAB2(J)) {
+      FVBSO = TAB2(J)
+    }
+    HFVBZSO = (VBEZB + VBEZBSO) / 100 - FVBSO
+    FVBZSO = ROUNDUP(FVBZ + VBEZBSO / 100)
+    if (FVBZSO > HFVBZSO) {
+      FVBZSO = ROUNDUP(HFVBZSO)
+    }
+    if (FVBZSO > TAB3(J)) {
+      FVBZSO = TAB3(J)
+    }
+    HFVBZ = VBEZB / 100 - FVB
+    if (FVBZ > HFVBZ) {
+      FVBZ = ROUNDUP(HFVBZ)
+    }
+  }
+  MRE4ALTE()
+}
+
+function MRE4ALTE() {}
+
 MPARA()
 MRE4JL()
+MRE4()
