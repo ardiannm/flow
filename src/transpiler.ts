@@ -1,3 +1,5 @@
+import * as fs from "fs"
+
 import { SyntaxKind } from "typescript"
 import { FirstStatement } from "./analysis/FirstStatement"
 import { DeclarationList } from "./analysis/FirstStatement"
@@ -18,8 +20,7 @@ import { FirstAssignment } from "./analysis/FirstAssignment"
 import { SlashToken } from "./analysis/SlashToken"
 import { PlusToken } from "./analysis/PlusToken"
 import { EqualsEqualsEqualsToken } from "./analysis/EqualsEqualsEqualsToken"
-
-import * as fs from "fs"
+import { ParenthesizedExpression } from "./analysis/ParenthesizedExpression"
 
 export class EmitOutput {
   constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public comment: string) {}
@@ -69,8 +70,14 @@ export class Transpiler {
         return this.AsteriskToken()
       case 41:
         return this.MinusToken()
+      case 217:
+        return this.ParenthesizedExpression(node as ParenthesizedExpression)
     }
     throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented: " + node.kind)
+  }
+
+  ParenthesizedExpression(node: ParenthesizedExpression): SyntaxNode {
+    return new ParenthesizedExpression(this.parse(node.expression))
   }
 
   MinusToken(): SyntaxNode {
@@ -180,7 +187,7 @@ export class Transpiler {
       this.position.set(node.escapedText, this.row)
       address += this.row
     }
-    return new Identifier(this, node.escapedText, address)
+    return new Identifier(node.escapedText, address)
   }
 
   VariableDeclaration(node: VariableDeclaration): SyntaxNode {

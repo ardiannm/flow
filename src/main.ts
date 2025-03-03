@@ -46,6 +46,10 @@ let W2STKL5 = 0
 let W3STKL5 = 0
 let GFB = 0
 let SOLZFREI = 0
+let ZRE4J = 0
+let ZVBEZJ = 0
+let JLFREIB = 0
+let JLHINZU = 0
 
 function MPARA() {
   if (KRV < 1) {
@@ -72,4 +76,31 @@ function MPARA() {
   W3STKL5 = 222260
   GFB = 11784
   SOLZFREI = 18130
+}
+
+function MRE4JL() {
+  if (LZZ === 1) {
+    ZRE4J = RE4 / 100
+    ZVBEZJ = VBEZ / 100
+    JLFREIB = LZZFREIB / 100
+    JLHINZU = LZZHINZU / 100
+  } else if (LZZ === 2) {
+    ZRE4J = (RE4 * 12) / 100
+    ZVBEZJ = (VBEZ * 12) / 100
+    JLFREIB = (LZZFREIB * 12) / 100
+    JLHINZU = (LZZHINZU * 12) / 100
+  } else if (LZZ === 3) {
+    ZRE4J = (RE4 * 360) / 7 / 100
+    ZVBEZJ = (VBEZ * 360) / 7 / 100
+    JLFREIB = (LZZFREIB * 360) / 7 / 100
+    JLHINZU = (LZZHINZU * 360) / 7 / 100
+  } else {
+    ZRE4J = (RE4 * 360) / 100
+    ZVBEZJ = (VBEZ * 360) / 100
+    JLFREIB = (LZZFREIB * 360) / 100
+    JLHINZU = (LZZHINZU * 360) / 100
+  }
+  if (AF === 0) {
+    F = 1
+  }
 }
