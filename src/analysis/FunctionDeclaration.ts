@@ -1,7 +1,8 @@
+import { Identifier } from "./Identifier"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class FunctionDeclaration extends SyntaxNode {
-  constructor(public name: SyntaxNode, public body: SyntaxNode) {
+  constructor(public name: Identifier, public body: SyntaxNode) {
     super(262)
   }
 

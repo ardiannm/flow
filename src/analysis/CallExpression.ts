@@ -6,9 +6,9 @@ export class CallExpression extends SyntaxNode {
     super(213)
   }
   override get text(): string {
-    throw new Error("Method not implemented.")
+    return this.expression.text
   }
   override get location(): string {
-    throw new Error("Method not implemented.")
+    return this.expression.location
   }
 }
