@@ -90,12 +90,13 @@ export class Transpiler {
   }
 
   CallExpression(node: CallExpression): SyntaxNode {
-    const functionNode = this.functions.get(node.expression.escapedText)!
+    const name = node.expression.escapedText
+    const functionNode = this.functions.get(name)!
     this.row++
-    const name = this.parse(functionNode.name)
-    this.csvData.push(new EmitOutput("", "", name.location, "", "execute " + name.text))
+    this.csvData.push(new EmitOutput("", "", "", "", "execute " + name))
     this.parse(functionNode.body)
-    return new CallExpression(name as Identifier)
+    const args = ((node as any).arguments as SyntaxNode[]).map((n) => this.parse(n))
+    return new CallExpression(node.expression, args)
   }
 
   ParenthesizedExpression(node: ParenthesizedExpression): SyntaxNode {
@@ -191,7 +192,7 @@ export class Transpiler {
 
   FunctionDeclaration(node: FunctionDeclaration): SyntaxNode {
     const name = this.parse(node.name)
-    this.csvData.push(new EmitOutput("", "", name.location, "", "define " + name.text))
+    this.csvData.push(new EmitOutput("", "", "", "", "define " + name.text))
     this.functions.set(name.text, node as FunctionDeclaration)
     return new SyntaxVoid(node.kind)
   }
