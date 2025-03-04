@@ -24,6 +24,8 @@ import { ParenthesizedExpression } from "./analysis/ParenthesizedExpression"
 import { CallExpression } from "./analysis/CallExpression"
 import { SyntaxVoid } from "./analysis/SyntaxVoid"
 import { GreaterThanToken } from "./analysis/GreaterThanToken"
+import { AmpersandAmpersandToken, GreaterThanEqualsToken } from "./analysis/GreaterThanEqualsToken"
+import { PrefixUnaryExpression } from "./analysis/PrefixUnaryExpression"
 
 export class EmitOutput {
   constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public comment: string) {}
@@ -79,10 +81,29 @@ export class Transpiler {
         return this.CallExpression(node as CallExpression)
       case 32:
         return this.GreaterThanToken()
+      case 34:
+        return this.GreaterThanEqualsToken()
+      case 56:
+        return this.AmpersandAmpersandToken()
+      case 224:
+        return this.PrefixUnaryExpression(node as PrefixUnaryExpression)
       case 253:
         return new SyntaxVoid(node.kind)
     }
     throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented " + node.kind)
+  }
+
+  PrefixUnaryExpression(node: PrefixUnaryExpression): SyntaxNode {
+    const operand = this.parse(node.operand)
+    return new PrefixUnaryExpression(node.operator, operand)
+  }
+
+  AmpersandAmpersandToken(): SyntaxNode {
+    return new AmpersandAmpersandToken()
+  }
+
+  GreaterThanEqualsToken(): SyntaxNode {
+    return new GreaterThanEqualsToken()
   }
 
   GreaterThanToken(): SyntaxNode {

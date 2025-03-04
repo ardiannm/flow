@@ -1,7 +1,7 @@
-import ts from "typescript"
+import { SyntaxKind } from "typescript"
 
 export abstract class SyntaxNode {
-  constructor(public kind: ts.SyntaxKind) {}
+  constructor(public kind: SyntaxKind) {}
 
   abstract get text(): string
   abstract get location(): string

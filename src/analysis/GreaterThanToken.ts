@@ -2,7 +2,7 @@ import { SyntaxNode } from "./SyntaxNode"
 
 export class GreaterThanToken extends SyntaxNode {
   constructor() {
-    super(40)
+    super(32)
   }
   override get text(): string {
     return ">"
