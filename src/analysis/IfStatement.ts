@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class IfStatement extends SyntaxNode {
-  constructor(public expression: SyntaxNode, public thenStatement: SyntaxNode, public elseStatement: SyntaxNode | undefined, public override pos: number) {
-    super(245, pos)
+  constructor(public expression: SyntaxNode, public thenStatement: SyntaxNode, public elseStatement: SyntaxNode | undefined) {
+    super(245)
   }
 
   override get text(): string {

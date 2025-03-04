@@ -2,10 +2,10 @@ import { AmpersandAmpersandToken } from "./AmpersandAmpersandToken"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class BinaryExpression extends SyntaxNode {
-  constructor(public left: SyntaxNode, public operatorToken: SyntaxNode, public right: SyntaxNode, public override pos: number) {
-    super(226, pos)
+  constructor(public left: SyntaxNode, public operatorToken: SyntaxNode, public right: SyntaxNode) {
+    super(226)
   }
-  
+
   override get text(): string {
     if (this.operatorToken instanceof AmpersandAmpersandToken) {
       return "AND(" + this.left.text + "," + this.right.text + ")"

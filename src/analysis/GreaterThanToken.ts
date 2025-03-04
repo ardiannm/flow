@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class GreaterThanToken extends SyntaxNode {
-  constructor(public override pos: number) {
-    super(32, pos)
+  constructor() {
+    super(32)
   }
 
   override get text(): string {

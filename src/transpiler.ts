@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-import { SyntaxKind, getLeadingCommentRanges } from "typescript"
+import { SyntaxKind } from "typescript"
 import { FirstStatement } from "./analysis/FirstStatement"
 import { DeclarationList } from "./analysis/FirstStatement"
 import { SourceFile } from "./analysis/SourceFile"
@@ -27,7 +27,6 @@ import { GreaterThanToken } from "./analysis/GreaterThanToken"
 import { GreaterThanEqualsToken } from "./analysis/GreaterThanEqualsToken"
 import { AmpersandAmpersandToken } from "./analysis/AmpersandAmpersandToken"
 import { PrefixUnaryExpression } from "./analysis/PrefixUnaryExpression"
-import { Comment } from "./analysis/Comment"
 import { EmitOutput } from "./EmitOutput"
 
 export class Transpiler {
@@ -60,135 +59,105 @@ export class Transpiler {
       case 226:
         return this.BinaryExpression(node as BinaryExpression)
       case 30:
-        return this.FirstBinaryOperator(node as FirstBinaryOperator)
+        return this.FirstBinaryOperator()
       case 244:
         return this.ExpressionStatement(node as ExpressionStatement)
       case 64:
-        return this.FirstAssignment(node as FirstAssignment)
+        return this.FirstAssignment()
       case 44:
-        return this.SlashToken(node as SlashToken)
+        return this.SlashToken()
       case 40:
-        return this.PlusToken(node as PlusToken)
+        return this.PlusToken()
       case 37:
-        return this.EqualsEqualsEqualsToken(node as EqualsEqualsEqualsToken)
+        return this.EqualsEqualsEqualsToken()
       case 42:
-        return this.AsteriskToken(node as AsteriskToken)
+        return this.AsteriskToken()
       case 41:
-        return this.MinusToken(node as MinusToken)
+        return this.MinusToken()
       case 217:
         return this.ParenthesizedExpression(node as ParenthesizedExpression)
       case 213:
         return this.CallExpression(node as CallExpression)
       case 32:
-        return this.GreaterThanToken(node as GreaterThanToken)
+        return this.GreaterThanToken()
       case 34:
-        return this.GreaterThanEqualsToken(node as GreaterThanEqualsToken)
+        return this.GreaterThanEqualsToken()
       case 56:
-        return this.AmpersandAmpersandToken(node as AmpersandAmpersandToken)
+        return this.AmpersandAmpersandToken()
       case 224:
         return this.PrefixUnaryExpression(node as PrefixUnaryExpression)
       case 253:
-        return new SyntaxVoid(node.kind, node.pos)
+        return new SyntaxVoid(node.kind)
     }
     throw new Error("<" + SyntaxKind[node.kind] + "> has not been implemented " + node.kind)
   }
 
   PrefixUnaryExpression(node: PrefixUnaryExpression): SyntaxNode {
     const operand = this.parse(node.operand)
-    return new PrefixUnaryExpression(node.operator, operand, node.pos)
+    return new PrefixUnaryExpression(node.operator, operand)
   }
 
-  AmpersandAmpersandToken(node: AmpersandAmpersandToken): SyntaxNode {
-    return new AmpersandAmpersandToken(node.pos)
+  AmpersandAmpersandToken(): SyntaxNode {
+    return new AmpersandAmpersandToken()
   }
 
-  GreaterThanEqualsToken(node: GreaterThanEqualsToken): SyntaxNode {
-    return new GreaterThanEqualsToken(node.pos)
+  GreaterThanEqualsToken(): SyntaxNode {
+    return new GreaterThanEqualsToken()
   }
 
-  GreaterThanToken(node: GreaterThanToken): SyntaxNode {
-    return new GreaterThanToken(node.pos)
+  GreaterThanToken(): SyntaxNode {
+    return new GreaterThanToken()
   }
 
   CallExpression(node: CallExpression): SyntaxNode {
-    this.saveComment(node)
     const name = node.expression.escapedText
     const functionNode = this.functions.get(name)!
     this.parse(functionNode.body)
     const args = ((node as any).arguments as SyntaxNode[]).map((n) => this.parse(n))
-    return new CallExpression(node.expression, args, node.pos)
+    return new CallExpression(node.expression, args)
   }
 
   ParenthesizedExpression(node: ParenthesizedExpression): SyntaxNode {
-    return new ParenthesizedExpression(this.parse(node.expression), node.pos)
+    return new ParenthesizedExpression(this.parse(node.expression))
   }
 
-  MinusToken(node: MinusToken): SyntaxNode {
-    return new MinusToken(node.pos)
+  MinusToken(): SyntaxNode {
+    return new MinusToken()
   }
 
-  AsteriskToken(node: AsteriskToken): SyntaxNode {
-    return new AsteriskToken(node.pos)
+  AsteriskToken(): SyntaxNode {
+    return new AsteriskToken()
   }
 
-  EqualsEqualsEqualsToken(node: EqualsEqualsEqualsToken): SyntaxNode {
-    return new EqualsEqualsEqualsToken(node.pos)
+  EqualsEqualsEqualsToken(): SyntaxNode {
+    return new EqualsEqualsEqualsToken()
   }
 
-  PlusToken(node: PlusToken): SyntaxNode {
-    return new PlusToken(node.pos)
+  PlusToken(): SyntaxNode {
+    return new PlusToken()
   }
 
-  SlashToken(node: SlashToken): SyntaxNode {
-    return new SlashToken(node.pos)
+  SlashToken(): SyntaxNode {
+    return new SlashToken()
   }
 
-  FirstAssignment(node: FirstAssignment): SyntaxNode {
-    return new FirstAssignment(node.pos)
+  FirstAssignment(): SyntaxNode {
+    return new FirstAssignment()
   }
 
   ExpressionStatement(node: ExpressionStatement): SyntaxNode {
-    return new ExpressionStatement(this.parse(node.expression), node.pos)
+    return new ExpressionStatement(this.parse(node.expression))
   }
 
-  FirstBinaryOperator(node: FirstBinaryOperator): SyntaxNode {
-    return new FirstBinaryOperator(node.pos)
+  FirstBinaryOperator(): SyntaxNode {
+    return new FirstBinaryOperator()
   }
 
   BinaryExpression(node: BinaryExpression): SyntaxNode {
     let rightNode = this.parse(node.right)
     let operatorToken = this.parse(node.operatorToken)
-    let leftNode: SyntaxNode
-    var value = ""
-    var valueAsReference = ""
-    if (operatorToken instanceof FirstAssignment) {
-      const prevVar = this.parse(node.left)
-      this.row++
-      this.position.set((node.left as Identifier).escapedText, this.row)
-      leftNode = this.parse(node.left)
-      value += rightNode.text
-      valueAsReference += rightNode.location
-      let n = this.conditions.length - 1
-      if (this.thenOrElse) {
-        while (n >= 0) {
-          const condition = this.conditions[n]
-          value = `IF(${condition.text},${value},${prevVar.text})`
-          valueAsReference = `IF(${condition.location},${valueAsReference},${prevVar.location})`
-          n--
-        }
-      } else {
-        while (n >= 0) {
-          const condition = this.conditions[n]
-          value = `IF(${condition.text},${prevVar.text},${value})`
-          valueAsReference = `IF(${condition.location},${prevVar.location},${valueAsReference})`
-          n--
-        }
-      }
-      this.csvData.push(new EmitOutput(leftNode.text, value, leftNode.location, valueAsReference, this.conditions.length ? (this.thenOrElse ? "if" : "else") : ""))
-    } else {
-      leftNode = this.parse(node.left)
-    }
-    return new BinaryExpression(leftNode, operatorToken, rightNode, node.pos)
+    let leftNode: SyntaxNode = this.parse(node.left)
+    return new BinaryExpression(leftNode, operatorToken, rightNode)
   }
 
   IfStatement(node: IfStatement): SyntaxNode {
@@ -202,22 +171,22 @@ export class Transpiler {
       elseStatement = this.parse(node.elseStatement) as Block
     }
     this.conditions.pop()
-    return new IfStatement(expression, thenStatement, elseStatement, node.pos)
+    return new IfStatement(expression, thenStatement, elseStatement)
   }
 
   Block(node: Block): SyntaxNode {
     const statements = node.statements.map((statement) => this.parse(statement))
-    return new Block(statements, node.pos)
+    return new Block(statements)
   }
 
   FunctionDeclaration(node: FunctionDeclaration): SyntaxNode {
     const name = node.name.escapedText
     this.functions.set(name, node as FunctionDeclaration)
-    return new SyntaxVoid(node.kind, node.pos)
+    return new SyntaxVoid(node.kind)
   }
 
   FirstLiteralToken(node: FirstLiteralToken): SyntaxNode {
-    return new FirstLiteralToken((node as { text: string }).text, node.pos)
+    return new FirstLiteralToken((node as { text: string }).text)
   }
 
   Identifier(node: Identifier): SyntaxNode {
@@ -229,25 +198,25 @@ export class Transpiler {
       this.position.set(node.escapedText, this.row)
       address += this.row
     }
-    return new Identifier(node.escapedText, address, node.pos)
+    return new Identifier(node.escapedText, address)
   }
 
   VariableDeclaration(node: VariableDeclaration): SyntaxNode {
     const name = this.parse(node.name)
     const value = this.parse(node.initializer)
-    const syntaxNode = new VariableDeclaration(name, value, node.pos)
+    const syntaxNode = new VariableDeclaration(name, value)
     this.csvData.push(new EmitOutput(name.text, value.text, name.location, value.location, ""))
     return syntaxNode
   }
 
   FirstStatement(node: FirstStatement): SyntaxNode {
     const declarations = (node as unknown as DeclarationList).declarationList.declarations.map((declaration) => this.parse(declaration))
-    return new FirstStatement(declarations, node.pos)
+    return new FirstStatement(declarations)
   }
 
   SourceFile(node: SourceFile) {
     const statements = node.statements.map((statement) => this.parse(statement))
-    return new SourceFile(statements, node.pos)
+    return new SourceFile(statements)
   }
 
   escapeCSVValue(value: string | number): string {
@@ -266,14 +235,5 @@ export class Transpiler {
       .map((row) => [this.escapeCSVValue(row.variable), this.escapeCSVValue(row.valueLocation), this.escapeCSVValue(row.comment), this.escapeCSVValue(row.value)])
       .join("\n")
     fs.writeFileSync("Ablaufplan Lohnsteuer 2024-11-22-PAP-2025_anlage.csv", csvContent)
-  }
-
-  saveComment(node: SyntaxNode) {
-    const comment = getLeadingCommentRanges(this.sourceCode, node.pos)?.map((comment) => new Comment(this, comment.pos, comment.end))
-    if (comment) {
-      const text = comment.map((comment) => this.sourceCode.substring(comment.pos, comment.end)).join("\n")
-      this.row += 1
-      this.csvData.push(new EmitOutput(text, "", "", "", ""))
-    }
   }
 }

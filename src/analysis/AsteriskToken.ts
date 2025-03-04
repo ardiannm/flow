@@ -1,10 +1,10 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class AsteriskToken extends SyntaxNode {
-  constructor(public override pos: number) {
-    super(42, pos)
+  constructor() {
+    super(42)
   }
-  
+
   override get text(): string {
     return "*"
   }

@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class EqualsEqualsEqualsToken extends SyntaxNode {
-  constructor(public override pos: number) {
-    super(37, pos)
+  constructor() {
+    super(37)
   }
 
   override get text(): string {

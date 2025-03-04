@@ -1,10 +1,10 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class AmpersandAmpersandToken extends SyntaxNode {
-  constructor(public override pos: number) {
-    super(56, pos)
+  constructor() {
+    super(56)
   }
-  
+
   override get text(): string {
     return "&&"
   }

@@ -2,8 +2,8 @@ import { Identifier } from "./Identifier"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class CallExpression extends SyntaxNode {
-  constructor(public expression: Identifier, public args: SyntaxNode[], public override pos: number) {
-    super(213, pos)
+  constructor(public expression: Identifier, public args: SyntaxNode[]) {
+    super(213)
   }
 
   override get text(): string {

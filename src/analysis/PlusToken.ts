@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class PlusToken extends SyntaxNode {
-  constructor(public override pos: number) {
-    super(40, pos)
+  constructor() {
+    super(40)
   }
 
   override get text(): string {

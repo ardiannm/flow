@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class MinusToken extends SyntaxNode {
-  constructor(public override pos: number) {
-    super(41, pos)
+  constructor() {
+    super(41)
   }
 
   override get text(): string {
