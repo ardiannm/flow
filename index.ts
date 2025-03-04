@@ -15,10 +15,6 @@ const transpiler = new Transpiler()
 
 transpiler.parse(ast)
 
-// let row = 1
-// for (const data of transpiler.csvData) {
-//   console.log(String(row).padEnd(7) + data.variable.padEnd(12) + data.valueLocation.padEnd(65) + data.comment.padEnd(20) + data.value)
-//   row++
-// }
+transpiler.generateCsv()
 
-// transpiler.generateCsv()
+console.log("Finished.")
