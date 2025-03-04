@@ -93,6 +93,21 @@ let VSP1 = 0
 let VSP2 = 0
 let VHB = 0
 let VSPN = 0
+let X = 0
+let VSP3 = 0
+let ZZX = 0
+let ZX = 0
+let VERGL = 0
+let HOCH = 0
+let ST1 = 0
+let ST2 = 0
+let DIFF = 0
+let MIST = 0
+let VFRBS1 = 0
+let WVFRBO = 0
+let VFRBS2 = 0
+let SOLZSZVE = 0
+let SOLZSBMG = 0
 
 function MPARA() {
   if (KRV < 1) {
@@ -173,6 +188,14 @@ function ROUNDUP(num: number, digits: number = 0): number {
 }
 
 function ROUNDDOWN(num: number, digits: number = 0): number {
+  return 0
+}
+
+function ROUND(num: number): number {
+  return 0
+}
+
+function ABS(num: number): number {
   return 0
 }
 
@@ -279,12 +302,6 @@ function MBERECH() {
   }
   MSOLZ()
 }
-
-MPARA()
-MRE4JL()
-MRE4()
-MRE4ABZ()
-MBERECH()
 
 function MZTABFB() {
   ANP = 0
@@ -403,17 +420,265 @@ function UPEVP() {
 }
 
 function UPMLST() {
-  throw new Error("Function not implemented.")
+  if (ZVE < 1) {
+    ZVE = 0
+    X = 0
+  } else {
+    X = ROUNDDOWN(ZVE / KZTAB)
+  }
+  if (STKL < 5) {
+    UPTAB24()
+  } else {
+    MST5_6()
+  }
 }
 
 function UPANTEIL() {
-  throw new Error("Function not implemented.")
+  if (LZZ === 1) {
+    ANTEIL1 = JW
+  } else if (LZZ === 2) {
+    ANTEIL1 = ROUND(JW / 12)
+  } else if (LZZ === 3) {
+    ANTEIL1 = ROUND((JW * 7) / 360)
+  } else {
+    ANTEIL1 = ROUND(JW / 360)
+  }
 }
 
 function UPVKV() {
-  throw new Error("Function not implemented.")
+  if (PKV > 0) {
+    if (VSP2 > VSP3) {
+      VKV = VSP2 * 100
+    } else {
+      VKV = VSP3 * 100
+    }
+  } else {
+    VKV = 0
+  }
 }
 
 function MVSP() {
-  throw new Error("Function not implemented.")
+  if (ZRE4VP > BBGKVPV) {
+    ZRE4VP = BBGKVPV
+  }
+  if (PKV > 0) {
+    if (STKL === 6) {
+      VSP3 = 0
+    } else {
+      VSP3 = (PKPV * 12) / 100
+      if (PKV === 2) {
+        VSP3 = VSP3 - ZRE4VP * (KVSATZAG + PVSATZAG)
+      }
+    }
+  } else {
+    VSP3 = ZRE4VP * (KVSATZAN + PVSATZAN)
+  }
+  VSP = ROUNDUP(VSP3 + VSP1)
 }
+
+let Y = 0
+let RW = 0
+
+function UPTAB24() {
+  if (X < GFB + 1) {
+    ST = 0
+  } else if (X < 17006) {
+    Y = (X - GFB) / 10000
+    RW = Y * 954.8
+    RW = RW + 1400
+    ST = ROUNDDOWN(RW * Y)
+  } else if (X < 66761) {
+    Y = (X - 17005) / 10000
+    RW = Y * 181.19
+    RW = RW + 2397
+    RW = RW * Y
+    ST = ROUNDDOWN(RW + 991.21)
+  } else if (X < 277826) {
+    ST = ROUNDDOWN(X * 0.42 - 10636.31)
+  } else {
+    ST = ROUNDDOWN(X * 0.45 - 18971.06)
+  }
+  ST = ST * KZTAB
+}
+
+function MST5_6() {
+  ZZX = X
+  if (ZZX > W2STKL5) {
+    ZX = W2STKL5
+    UP5_6()
+    if (ZZX > W3STKL5) {
+      ST = ROUNDDOWN(ST + (W3STKL5 - W2STKL5) * 0.42)
+      ST = ROUNDDOWN(ST + (ZZX - W3STKL5) * 0.45)
+    } else {
+      ST = ROUNDDOWN(ST + (ZZX - W2STKL5) * 0.42)
+    }
+  } else {
+    ZX = ZZX
+    UP5_6()
+    if (ZZX > W1STKL5) {
+      VERGL = ST
+      ZX = W1STKL5
+      UP5_6()
+      HOCH = ROUNDDOWN(ST + (ZZX - W1STKL5) * 0.42)
+      if (HOCH < VERGL) {
+        ST = HOCH
+      } else {
+        ST = VERGL
+      }
+    }
+  }
+}
+
+function UP5_6() {
+  X = ZX * 1.25
+  UPTAB24()
+  ST1 = ST
+  X = ZX * 0.75
+  UPTAB24()
+  ST2 = ST
+  DIFF = (ST1 - ST2) * 2
+  MIST = ROUNDDOWN(ZX * 0.14)
+  if (MIST > DIFF) {
+    ST = MIST
+  } else {
+    ST = DIFF
+  }
+}
+
+let VKVSONST = 0
+let LSTSO = 0
+let STS = 0
+let SOLZS = 0
+let BKS = 0
+let WVFRBM = 0
+let LSTOSO = 0
+
+function MSONST() {
+  LZZ = 1
+  if (ZMVB === 0) {
+    ZMVB = 12
+  }
+  if (SONSTB === 0 && MBV === 0) {
+    VKVSONST = 0
+    LSTSO = 0
+    STS = 0
+    SOLZS = 0
+    BKS = 0
+  } else {
+    MOSONST()
+    UPVKV()
+    VKVSONST = VKV
+    ZRE4J = (JRE4 + SONSTB) / 100
+    ZVBEZJ = (JVBEZ + VBS) / 100
+    VBEZBSO = STERBE
+    MRE4SONST()
+    MLSTJAHR()
+    WVFRBM = (ZVE - GFB) * 100
+    if (WVFRBM < 0) {
+      WVFRBM = 0
+    }
+    UPVKV()
+    VKVSONST = VKV - VKVSONST
+    LSTSO = ST * 100
+    // Hinweis: negative Zahlen
+    // werden nach ihrem Betrag
+    //gerundet!
+    STS = (LSTSO - LSTOSO) * F
+    if (STS < 0) {
+      STS = -ROUNDDOWN(ABS(STS))
+    } else {
+      STS = ROUNDDOWN(ABS(STS))
+    }
+    STSMIN()
+  }
+}
+
+function MOSONST() {
+  ZRE4J = JRE4 / 100
+  ZVBEZJ = JVBEZ / 100
+  JLFREIB = JFREIB / 100
+  JLHINZU = JHINZU / 100
+  MRE4()
+  MRE4ABZ()
+  ZRE4VP = ZRE4VP - JRE4ENT / 100
+  MZTABFB()
+  VFRBS1 = (ANP + FVB + FVBZ) * 100
+  MLSTJAHR()
+  WVFRBO = (ZVE - GFB) * 100
+  if (WVFRBO < 0) {
+    WVFRBO = 0
+  }
+  LSTOSO = ST * 100
+}
+
+function MRE4SONST() {
+  MRE4()
+  FVB = FVBSO
+  MRE4ABZ()
+  ZRE4VP = ZRE4VP + MBV / 100 - JRE4ENT / 100 - SONSTENT / 100
+  FVBZ = FVBZSO
+  MZTABFB()
+  VFRBS2 = (ANP + FVB + FVBZ) * 100 - VFRBS1
+}
+
+function STSMIN() {
+  if (STS < 0) {
+    if (MBV === 0) {
+    } else {
+      LSTLZZ = LSTLZZ + STS
+      if (LSTLZZ < 0) {
+        LSTLZZ = 0
+      }
+      SOLZLZZ = ROUNDDOWN(SOLZLZZ + (STS * 5.5) / 100, 2)
+      if (SOLZLZZ < 0) {
+        SOLZLZZ = 0
+      }
+      BK = BK + STS
+      if (BK < 0) {
+        BK = 0
+      }
+    }
+    STS = 0
+    SOLZS = 0
+  } else {
+    MSOLZSTS()
+  }
+  if (R > 0) {
+    BKS = STS
+  } else {
+    BKS = 0
+  }
+}
+
+function MSOLZSTS() {
+  if (ZKF > 0) {
+    SOLZSZVE = ZVE - KFB
+  } else {
+    SOLZSZVE = ZVE
+  }
+  if (SOLZSZVE < 1) {
+    SOLZSZVE = 0
+    X = 0
+  } else {
+    X = ROUNDDOWN(SOLZSZVE / KZTAB)
+  }
+  if (STKL < 5) {
+    UPTAB24()
+  } else {
+    MST5_6()
+  }
+  SOLZSBMG = ROUNDDOWN(ST * F)
+  if (SOLZSBMG > SOLZFREI) {
+    SOLZS = ROUNDDOWN((STS * 5.5) / 100, 2)
+  } else {
+    SOLZS = 0
+  }
+}
+
+MPARA()
+MRE4JL()
+VBEZBSO = 0
+MRE4()
+MRE4ABZ()
+MBERECH()
+MSONST()
