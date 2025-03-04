@@ -1,9 +1,10 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class EqualsEqualsEqualsToken extends SyntaxNode {
-  constructor() {
-    super(37)
+  constructor(public override pos: number) {
+    super(37, pos)
   }
+
   override get text(): string {
     return "="
   }

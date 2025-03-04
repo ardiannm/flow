@@ -1,9 +1,10 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class SlashToken extends SyntaxNode {
-  constructor() {
-    super(44)
+  constructor(public override pos: number) {
+    super(44, pos)
   }
+  
   override get text(): string {
     return "/"
   }

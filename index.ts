@@ -11,7 +11,7 @@ const sourceFile = ts.createSourceFile(fileName, sourceCode, ts.ScriptTarget.Lat
 
 const ast = JSON.parse(JSON.stringify(sourceFile))
 
-const transpiler = new Transpiler()
+const transpiler = new Transpiler(sourceCode)
 
 transpiler.parse(ast)
 

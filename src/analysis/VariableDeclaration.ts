@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class VariableDeclaration extends SyntaxNode {
-  constructor(public name: SyntaxNode, public initializer: SyntaxNode) {
-    super(260)
+  constructor(public name: SyntaxNode, public initializer: SyntaxNode, public override pos: number) {
+    super(260, pos)
   }
 
   override get text(): string {

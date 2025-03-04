@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class FirstStatement extends SyntaxNode {
-  constructor(public declarations: SyntaxNode[]) {
-    super(243)
+  constructor(public declarations: SyntaxNode[], public override pos: number) {
+    super(243, pos)
   }
 
   override get text(): string {

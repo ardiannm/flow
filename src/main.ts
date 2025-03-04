@@ -580,9 +580,6 @@ function MSONST() {
     UPVKV()
     VKVSONST = VKV - VKVSONST
     LSTSO = ST * 100
-    // Hinweis: negative Zahlen
-    // werden nach ihrem Betrag
-    //gerundet!
     STS = (LSTSO - LSTOSO) * F
     if (STS < 0) {
       STS = -ROUNDDOWN(ABS(STS))
@@ -675,10 +672,22 @@ function MSOLZSTS() {
   }
 }
 
+// Zuweisung von Werten für bestimmte Sozialversicherungsparameter
 MPARA()
+
+// Ermittlung des Jahresarbeitslohns nach § 39b Absatz 2 Satz 2 EStG
 MRE4JL()
+
 VBEZBSO = 0
+
+// Ermittlung der Freibeträge nach § 39b Absatz 2 Satz 3 EStG
 MRE4()
+
+// Abzug der Freibeträge nach § 39b Absatz 2 Satz 3 und 4 EStG vom Jahresarbeitslohn
 MRE4ABZ()
+
+// Ermittlung der Jahreslohnsteuer auf laufende Bezüge
 MBERECH()
+
+// Berechnung sonstiger Bezüge ohne Vergütung für mehrjährige Tätigkeit
 MSONST()

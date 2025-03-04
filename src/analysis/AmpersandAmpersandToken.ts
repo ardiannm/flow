@@ -1,15 +1,15 @@
 import { SyntaxNode } from "./SyntaxNode"
 
-export class MinusToken extends SyntaxNode {
+export class AmpersandAmpersandToken extends SyntaxNode {
   constructor(public override pos: number) {
-    super(41, pos)
+    super(56, pos)
   }
-
+  
   override get text(): string {
-    return "-"
+    return "&&"
   }
 
-  override get location() {
+  override get location(): string {
     return this.text
   }
 }

@@ -1,8 +1,8 @@
 import { SyntaxNode } from "./SyntaxNode"
 
 export class PrefixUnaryExpression extends SyntaxNode {
-  constructor(public operator: number, public operand: SyntaxNode) {
-    super(224)
+  constructor(public operator: number, public operand: SyntaxNode, public override pos: number) {
+    super(224, pos)
   }
 
   override get text(): string {

@@ -2,8 +2,8 @@ import { Identifier } from "./Identifier"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class FunctionDeclaration extends SyntaxNode {
-  constructor(public name: Identifier, public body: SyntaxNode) {
-    super(262)
+  constructor(public name: Identifier, public body: SyntaxNode, public override pos: number) {
+    super(262, pos)
   }
 
   override get text(): string {
