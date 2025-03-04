@@ -28,10 +28,7 @@ import { GreaterThanEqualsToken } from "./analysis/GreaterThanEqualsToken"
 import { AmpersandAmpersandToken } from "./analysis/AmpersandAmpersandToken"
 import { PrefixUnaryExpression } from "./analysis/PrefixUnaryExpression"
 import { Comment } from "./analysis/Comment"
-
-export class EmitOutput {
-  constructor(public variable: string, public value: string, public variableLocation: string, public valueLocation: string, public comment: string) {}
-}
+import { EmitOutput } from "./EmitOutput"
 
 export class Transpiler {
   row = 0
@@ -275,9 +272,8 @@ export class Transpiler {
     const comment = getLeadingCommentRanges(this.sourceCode, node.pos)?.map((comment) => new Comment(this, comment.pos, comment.end))
     if (comment) {
       const text = comment.map((comment) => this.sourceCode.substring(comment.pos, comment.end)).join("\n")
-      console.log(text)
-      this.row++
-      this.csvData.push(new EmitOutput("", "", "", "", text))
+      this.row += 1
+      this.csvData.push(new EmitOutput(text, "", "", "", ""))
     }
   }
 }

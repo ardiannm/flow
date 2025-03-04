@@ -1,4 +1,4 @@
-import { Transpiler } from "../transpiler"
+import { Transpiler } from "../Transpiler"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class Comment extends SyntaxNode {

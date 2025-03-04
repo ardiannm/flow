@@ -163,23 +163,23 @@ function MRE4JL() {
   }
 }
 
-function TAB1(num: number) {
+function TAB_EINS(num: number) {
   return num
 }
 
-function TAB2(num: number) {
+function TAB_ZWEI(num: number) {
   return num
 }
 
-function TAB3(num: number) {
+function TAB_DREI(num: number) {
   return num
 }
 
-function TAB4(num: number) {
+function TAB_VIER(num: number) {
   return num
 }
 
-function TAB5(num: number) {
+function TAB_FÜNF(num: number) {
   return num
 }
 
@@ -215,31 +215,31 @@ function MRE4() {
     }
     if (LZZ === 1) {
       VBEZB = VBEZM * ZMVB + VBEZS
-      HFVB = ROUNDUP((TAB2(J) / 12) * ZMVB)
-      FVBZ = ROUNDUP((TAB3(J) / 12) * ZMVB)
+      HFVB = ROUNDUP((TAB_ZWEI(J) / 12) * ZMVB)
+      FVBZ = ROUNDUP((TAB_DREI(J) / 12) * ZMVB)
     } else {
       VBEZB = VBEZM * 12 + VBEZS
-      HFVB = TAB2(J)
-      FVBZ = TAB3(J)
+      HFVB = TAB_ZWEI(J)
+      FVBZ = TAB_DREI(J)
     }
-    FVB = ROUNDUP((VBEZB * TAB1(J)) / 100, 2)
+    FVB = ROUNDUP((VBEZB * TAB_EINS(J)) / 100, 2)
     if (FVB > HFVB) {
       FVB = HFVB
     }
     if (FVB > ZVBEZJ) {
       FVB = ZVBEZJ
     }
-    FVBSO = ROUNDUP(FVB + (VBEZBSO * TAB1(J)) / 100, 2)
-    if (FVBSO > TAB2(J)) {
-      FVBSO = TAB2(J)
+    FVBSO = ROUNDUP(FVB + (VBEZBSO * TAB_EINS(J)) / 100, 2)
+    if (FVBSO > TAB_ZWEI(J)) {
+      FVBSO = TAB_ZWEI(J)
     }
     HFVBZSO = (VBEZB + VBEZBSO) / 100 - FVBSO
     FVBZSO = ROUNDUP(FVBZ + VBEZBSO / 100)
     if (FVBZSO > HFVBZSO) {
       FVBZSO = ROUNDUP(HFVBZSO)
     }
-    if (FVBZSO > TAB3(J)) {
-      FVBZSO = TAB3(J)
+    if (FVBZSO > TAB_DREI(J)) {
+      FVBZSO = TAB_DREI(J)
     }
     HFVBZ = VBEZB / 100 - FVB
     if (FVBZ > HFVBZ) {
@@ -261,8 +261,8 @@ function MRE4ALTE() {
       K = 54
     }
     BMG = ZRE4J - ZVBEZJ
-    ALTE = ROUNDUP(BMG * TAB4(K))
-    HBALTE = TAB5(K)
+    ALTE = ROUNDUP(BMG * TAB_VIER(K))
+    HBALTE = TAB_FÜNF(K)
     if (ALTE > HBALTE) {
       ALTE = HBALTE
     }
@@ -672,22 +672,22 @@ function MSOLZSTS() {
   }
 }
 
-// Zuweisung von Werten für bestimmte Sozialversicherungsparameter
+// MPARA Zuweisung von Werten für bestimmte Sozialversicherungsparameter
 MPARA()
 
-// Ermittlung des Jahresarbeitslohns nach § 39b Absatz 2 Satz 2 EStG
+// MRE4JL Ermittlung des Jahresarbeitslohns nach § 39b Absatz 2 Satz 2 EStG
 MRE4JL()
 
 VBEZBSO = 0
 
-// Ermittlung der Freibeträge nach § 39b Absatz 2 Satz 3 EStG
+// MRE4 Ermittlung der Freibeträge nach § 39b Absatz 2 Satz 3 EStG
 MRE4()
 
-// Abzug der Freibeträge nach § 39b Absatz 2 Satz 3 und 4 EStG vom Jahresarbeitslohn
+// MRE4ABZ Abzug der Freibeträge nach § 39b Absatz 2 Satz 3 und 4 EStG vom Jahresarbeitslohn
 MRE4ABZ()
 
-// Ermittlung der Jahreslohnsteuer auf laufende Bezüge
+// MBERECH Ermittlung der Jahreslohnsteuer auf laufende Bezüge
 MBERECH()
 
-// Berechnung sonstiger Bezüge ohne Vergütung für mehrjährige Tätigkeit
+// MSONST Berechnung sonstiger Bezüge ohne Vergütung für mehrjährige Tätigkeit
 MSONST()
