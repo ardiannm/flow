@@ -1,7 +1,8 @@
+import { Block } from "./Block"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class IfStatement extends SyntaxNode {
-  constructor(public expression: SyntaxNode, public thenStatement: SyntaxNode, public elseStatement: SyntaxNode | undefined) {
+  constructor(public expression: SyntaxNode, public thenStatement: Block, public elseStatement: Block | undefined) {
     super(245)
   }
 

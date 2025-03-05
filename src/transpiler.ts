@@ -15,7 +15,7 @@ import { Block } from "./analysis/Block"
 import { IfStatement } from "./analysis/IfStatement"
 import { BinaryExpression } from "./analysis/BinaryExpression"
 import { FirstBinaryOperator } from "./analysis/FirstBinaryOperator"
-import { ExpressionStatement } from "./analysis/ExpressionStatement"
+import { ConditionalAssignment, ExpressionStatement } from "./analysis/ExpressionStatement"
 import { FirstAssignment } from "./analysis/FirstAssignment"
 import { SlashToken } from "./analysis/SlashToken"
 import { PlusToken } from "./analysis/PlusToken"
@@ -30,11 +30,12 @@ import { PrefixUnaryExpression } from "./analysis/PrefixUnaryExpression"
 import { EmitOutput } from "./EmitOutput"
 
 export class Transpiler {
-  row = 0
-  position = new Map<string, number>()
-  conditions: SyntaxNode[] = []
-  thenOrElse = true
   csvData: EmitOutput[] = []
+
+  private row = 0
+  private switch = true
+  private locations = new Map<string, number>()
+  private conditions: SyntaxNode[] = []
   private functions = new Map<string, FunctionDeclaration>()
   constructor(public sourceCode: string) {}
 
@@ -154,24 +155,32 @@ export class Transpiler {
   }
 
   BinaryExpression(node: BinaryExpression): SyntaxNode {
-    let rightNode = this.parse(node.right)
-    let operatorToken = this.parse(node.operatorToken)
-    let leftNode: SyntaxNode = this.parse(node.left)
+    const operatorToken = this.parse(node.operatorToken)
+    const rightNode = this.parse(node.right)
+    let leftNode = this.parse(node.left)
+    if (operatorToken instanceof FirstAssignment) {
+      const syntaxNode = new ConditionalAssignment(leftNode as Identifier, [...this.conditions], this.switch ? rightNode : leftNode, this.switch ? leftNode : rightNode)
+      this.locations.delete(syntaxNode.identifier.text)
+      leftNode = this.parse(node.left)
+      this.csvData.push(new EmitOutput(leftNode.text, syntaxNode.text, leftNode.location, syntaxNode.location, ""))
+      console.log(syntaxNode.text)
+      return syntaxNode
+    }
     return new BinaryExpression(leftNode, operatorToken, rightNode)
   }
 
   IfStatement(node: IfStatement): SyntaxNode {
-    const expression = this.parse(node.expression)
-    this.conditions.push(expression)
-    this.thenOrElse = true
+    const condition = this.parse(node.expression)
+    this.conditions.push(condition)
     const thenStatement = this.parse(node.thenStatement) as Block
-    let elseStatement: Block | undefined
+    let elseStatement: Block | undefined = undefined
     if (node.elseStatement) {
-      this.thenOrElse = false
+      this.switch = false
       elseStatement = this.parse(node.elseStatement) as Block
+      this.switch = true
     }
     this.conditions.pop()
-    return new IfStatement(expression, thenStatement, elseStatement)
+    return new IfStatement(condition, thenStatement, elseStatement)
   }
 
   Block(node: Block): SyntaxNode {
@@ -191,11 +200,11 @@ export class Transpiler {
 
   Identifier(node: Identifier): SyntaxNode {
     let address: string = "B"
-    if (this.position.has(node.escapedText)) {
-      address += this.position.get(node.escapedText)!
+    if (this.locations.has(node.escapedText)) {
+      address += this.locations.get(node.escapedText)!
     } else {
       this.row++
-      this.position.set(node.escapedText, this.row)
+      this.locations.set(node.escapedText, this.row)
       address += this.row
     }
     return new Identifier(node.escapedText, address)
