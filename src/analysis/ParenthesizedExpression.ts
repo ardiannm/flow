@@ -1,3 +1,6 @@
+import { AsteriskToken } from "./AsteriskToken"
+import { BinaryExpression } from "./BinaryExpression"
+import { SlashToken } from "./SlashToken"
 import { SyntaxNode } from "./SyntaxNode"
 
 export class ParenthesizedExpression extends SyntaxNode {
@@ -6,9 +9,18 @@ export class ParenthesizedExpression extends SyntaxNode {
   }
 
   override get text(): string {
-    return "(" + this.expression.text + ")"
+    const text = this.expression.text
+    if (this.expression instanceof BinaryExpression && (this.expression.operatorToken instanceof AsteriskToken || this.expression.operatorToken instanceof SlashToken)) {
+      return text
+    }
+    return "(" + text + ")"
   }
+
   override get location(): string {
-    return "(" + this.expression.location + ")"
+    const location = this.expression.location
+    if (this.expression instanceof BinaryExpression && (this.expression.operatorToken instanceof AsteriskToken || this.expression.operatorToken instanceof SlashToken)) {
+      return location
+    }
+    return "(" + location + ")"
   }
 }

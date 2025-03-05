@@ -15,7 +15,8 @@ import { Block } from "./analysis/Block"
 import { IfStatement } from "./analysis/IfStatement"
 import { BinaryExpression } from "./analysis/BinaryExpression"
 import { FirstBinaryOperator } from "./analysis/FirstBinaryOperator"
-import { ConditionalAssignment, ExpressionStatement } from "./analysis/ExpressionStatement"
+import { ExpressionStatement } from "./analysis/ExpressionStatement"
+import { ConditionalAssignment } from "./analysis/ConditionalAssignment"
 import { FirstAssignment } from "./analysis/FirstAssignment"
 import { SlashToken } from "./analysis/SlashToken"
 import { PlusToken } from "./analysis/PlusToken"
@@ -113,6 +114,8 @@ export class Transpiler {
   CallExpression(node: CallExpression): SyntaxNode {
     const name = node.expression.escapedText
     const functionNode = this.functions.get(name)!
+    this.csvData.push(new EmitOutput("// " + name, "", "", "", ""))
+    this.row++
     this.parse(functionNode.body)
     const args = ((node as any).arguments as SyntaxNode[]).map((n) => this.parse(n))
     return new CallExpression(node.expression, args)
