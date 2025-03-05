@@ -1,6 +1,6 @@
 {
   "version": "3.9.5",
-  "description": "A TypeScript project implementing a lexer, parser, and interpreter",
+  "description": "A TypeScript-based transpiler that converts German tax calculation algorithms expressed in flowchart logic to Excel formulas in CSV format.",
   "license": "UNLICENSED",
   "repository": {
     "type": "github",
