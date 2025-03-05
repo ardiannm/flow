@@ -29,14 +29,14 @@ import { GreaterThanEqualsToken } from "./analysis/GreaterThanEqualsToken"
 import { AmpersandAmpersandToken } from "./analysis/AmpersandAmpersandToken"
 import { PrefixUnaryExpression } from "./analysis/PrefixUnaryExpression"
 import { EmitOutput } from "./EmitOutput"
+import { Condition } from "./analysis/Condition"
 
 export class Transpiler {
   csvData: EmitOutput[] = []
 
   private row = 0
-  private switch = true
   private locations = new Map<string, number>()
-  private conditions: SyntaxNode[] = []
+  private conditions: Condition[] = []
   private functions = new Map<string, FunctionDeclaration>()
   constructor(public sourceCode: string) {}
 
@@ -162,11 +162,10 @@ export class Transpiler {
     const rightNode = this.parse(node.right)
     let leftNode = this.parse(node.left)
     if (operatorToken instanceof FirstAssignment) {
-      const syntaxNode = new ConditionalAssignment(leftNode as Identifier, [...this.conditions], this.switch ? rightNode : leftNode, this.switch ? leftNode : rightNode)
+      const syntaxNode = new ConditionalAssignment(leftNode as Identifier, [...this.conditions], rightNode, leftNode)
       this.locations.delete(syntaxNode.identifier.text)
       leftNode = this.parse(node.left)
       this.csvData.push(new EmitOutput(leftNode.text, syntaxNode.text, leftNode.location, syntaxNode.location, ""))
-      console.log(syntaxNode.text)
       return syntaxNode
     }
     return new BinaryExpression(leftNode, operatorToken, rightNode)
@@ -174,13 +173,13 @@ export class Transpiler {
 
   IfStatement(node: IfStatement): SyntaxNode {
     const condition = this.parse(node.expression)
-    this.conditions.push(condition)
+    this.conditions.push(new Condition(condition))
     const thenStatement = this.parse(node.thenStatement) as Block
     let elseStatement: Block | undefined = undefined
     if (node.elseStatement) {
-      this.switch = false
+      this.conditions[this.conditions.length - 1].block = false
       elseStatement = this.parse(node.elseStatement) as Block
-      this.switch = true
+      this.conditions[this.conditions.length - 1].block = true
     }
     this.conditions.pop()
     return new IfStatement(condition, thenStatement, elseStatement)
