@@ -31,6 +31,8 @@ import { PrefixUnaryExpression } from "./analysis/PrefixUnaryExpression"
 import { EmitOutput } from "./EmitOutput"
 import { Condition } from "./analysis/Condition"
 
+const doNotReportFor: string[] = ["ROUND", "ROUNDUP", "ROUNDDOWN", "ABS", "TAB_EINS", "TAB_ZWEI", "TAB_DREI", "TAB_VIER", "TAB_FÜNF"]
+
 export class Transpiler {
   csvData: EmitOutput[] = []
 
@@ -114,8 +116,10 @@ export class Transpiler {
   CallExpression(node: CallExpression): SyntaxNode {
     const name = node.expression.escapedText
     const functionNode = this.functions.get(name)!
-    this.csvData.push(new EmitOutput("// " + name, "", "", "", ""))
-    this.row++
+    if (!doNotReportFor.includes(name)) {
+      this.csvData.push(new EmitOutput("* " + name, "", "", "", ""))
+      this.row++
+    }
     this.parse(functionNode.body)
     const args = ((node as any).arguments as SyntaxNode[]).map((n) => this.parse(n))
     return new CallExpression(node.expression, args)

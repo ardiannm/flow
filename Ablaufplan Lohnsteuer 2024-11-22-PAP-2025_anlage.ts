@@ -672,22 +672,26 @@ function MSOLZSTS() {
   }
 }
 
-// MPARA Zuweisung von Werten für bestimmte Sozialversicherungsparameter
-MPARA()
+function LST2025() {
+  // MPARA Zuweisung von Werten für bestimmte Sozialversicherungsparameter
+  MPARA()
 
-// MRE4JL Ermittlung des Jahresarbeitslohns nach § 39b Absatz 2 Satz 2 EStG
-MRE4JL()
+  // MRE4JL Ermittlung des Jahresarbeitslohns nach § 39b Absatz 2 Satz 2 EStG
+  MRE4JL()
 
-VBEZBSO = 0
+  VBEZBSO = 0
 
-// MRE4 Ermittlung der Freibeträge nach § 39b Absatz 2 Satz 3 EStG
-MRE4()
+  // MRE4 Ermittlung der Freibeträge nach § 39b Absatz 2 Satz 3 EStG
+  MRE4()
 
-// MRE4ABZ Abzug der Freibeträge nach § 39b Absatz 2 Satz 3 und 4 EStG vom Jahresarbeitslohn
-MRE4ABZ()
+  // MRE4ABZ Abzug der Freibeträge nach § 39b Absatz 2 Satz 3 und 4 EStG vom Jahresarbeitslohn
+  MRE4ABZ()
 
-// MBERECH Ermittlung der Jahreslohnsteuer auf laufende Bezüge
-MBERECH()
+  // MBERECH Ermittlung der Jahreslohnsteuer auf laufende Bezüge
+  MBERECH()
 
-// MSONST Berechnung sonstiger Bezüge ohne Vergütung für mehrjährige Tätigkeit
-MSONST()
+  // MSONST Berechnung sonstiger Bezüge ohne Vergütung für mehrjährige Tätigkeit
+  MSONST()
+}
+
+LST2025()
